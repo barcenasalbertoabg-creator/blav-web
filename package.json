@@ -1,0 +1,35 @@
+{
+  "name": "blav-web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "migrate": "node scripts/migrate-to-sanity.mjs"
+  },
+  "dependencies": {
+    "@portabletext/react": "^6.0.3",
+    "@sanity/image-url": "^2.1.1",
+    "@sanity/vision": "^3.99.0",
+    "framer-motion": "^12.38.0",
+    "next": "14.2.35",
+    "next-sanity": "^9.12.3",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-hook-form": "^7.73.1",
+    "sanity": "^3.99.0",
+    "styled-components": "^6.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.35",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}

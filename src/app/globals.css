@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --gold: #7A7029;
+    --gold-light: #A0963B;
+    --black: #0D0D0D;
+    --gray: #F5F5F0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-white text-blav-black font-sans antialiased;
+  }
+}
+
+@layer components {
+  .btn-gold {
+    @apply inline-flex items-center gap-2 bg-gold text-white px-6 py-3 font-sans text-sm font-medium tracking-widest uppercase hover:bg-gold-light transition-colors duration-200;
+  }
+
+  .btn-outline-white {
+    @apply inline-flex items-center gap-2 border border-white text-white px-6 py-3 font-sans text-sm font-medium tracking-widest uppercase hover:bg-white hover:text-blav-black transition-colors duration-200;
+  }
+
+  .btn-outline-gold {
+    @apply inline-flex items-center gap-2 border border-gold text-gold px-6 py-3 font-sans text-sm font-medium tracking-widest uppercase hover:bg-gold hover:text-white transition-colors duration-200;
+  }
+
+  .section-title {
+    @apply font-display text-3xl md:text-4xl lg:text-5xl text-blav-black leading-tight;
+  }
+
+  .section-subtitle {
+    @apply font-sans text-blav-grayMid text-base md:text-lg leading-relaxed;
+  }
+
+  .gold-label {
+    @apply inline-block text-xs font-sans font-medium tracking-widest uppercase text-gold border border-gold px-3 py-1;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "slug": "distrito-comercial-2-17",
+  "nombre": "Distrito Comercial 2.17",
+  "categoria": "Comercial",
+  "estado": "activo",
+  "destacado": true,
+  "ubicacion": {
+    "ciudad": "Querétaro",
+    "zona": "Zona Norponiente",
+    "descripcion": "Libramiento Norponiente / Av. de la Luz",
+    "maps_url": "https://maps.app.goo.gl/jztv65As8dbk8dew6",
+    "maps_embed_url": ""
+  },
+  "precio_desde": null,
+  "moneda": "MXN",
+  "nota_precio": "Solicitar información para precios y disponibilidad",
+  "descripcion_corta": "El nuevo epicentro comercial de Querétaro. 300 locales, 28,844 m² y más de 160,000 visitas semanales estimadas.",
+  "descripcion_larga": "Distrito Comercial 2·17 es un proyecto diseñado como el nuevo núcleo comercial, social y urbano de la Zona Norponiente de Querétaro. Su objetivo es convertirse en un ecosistema multifuncional que combine comercio, gastronomía, salud, tecnología y estilo de vida en un espacio integral y sostenible.\n\nUbicado estratégicamente en el cruce de Libramiento Norponiente y Av. de la Luz, con cuatro accesos viales y 70,000 vehículos diarios en sus corredores principales, DC 2.17 responde a una demanda insatisfecha en la zona de mayor crecimiento de Querétaro: 622 hectáreas urbanizadas con escasa oferta comercial consolidada.\n\nDesarrollado por GESS Inmobiliaria, constructora mexicana con más de 34 años de experiencia y proyectos emblemáticos como el Estadio de Béisbol Conspiradores y Campanario Norte. BLAV Bienes Raíces participa como broker comercial junto con VIVANT Expertos Inmobiliarios.",
+  "cifras_clave": [
+    { "numero": "28,844", "unidad": "m²", "descripcion": "de construcción total" },
+    { "numero": "300", "unidad": "locales", "descripcion": "disponibles para renta/venta" },
+    { "numero": "+160K", "unidad": "visitas/sem", "descripcion": "afluencia estimada" },
+    { "numero": "281K", "unidad": "personas", "descripcion": "en radio de 5 km" }
+  ],
+  "caracteristicas": [
+    { "label": "Desarrollador", "valor": "GESS Inmobiliaria (34 años de experiencia)" },
+    { "label": "Superficie total", "valor": "28,844 m²" },
+    { "label": "Total de locales", "valor": "300" },
+    { "label": "Niveles", "valor": "Planta baja, 1er y 2do nivel" },
+    { "label": "Afluencia estimada", "valor": "+160,000 visitas/semana" },
+    { "label": "Población en radio 5 km", "valor": "281,000 personas" },
+    { "label": "Tráfico vehicular", "valor": "70,000 autos/día en vialidades de acceso" },
+    { "label": "Ubicación", "valor": "Zona Norponiente, Querétaro" },
+    { "label": "Accesos principales", "valor": "Blvd. Peña Flor, Av. de la Luz, C. Hidalgo, Av. Tlacote" },
+    { "label": "Estatus", "valor": "En desarrollo" },
+    { "label": "Broker comercial", "valor": "BLAV Bienes Raíces + VIVANT Expertos Inmobiliarios" }
+  ],
+  "pabellones": [
+    { "nombre": "Comercial", "detalle": "16 locales para anclas comerciales en planta baja y primer nivel" },
+    { "nombre": "Alimentación", "detalle": "2 locales drive-thru en acceso principal. Ideal para cadenas de alimentos" },
+    { "nombre": "Tecnológico", "detalle": "Locales especializados en tecnología, electrónica y telecomunicaciones" },
+    { "nombre": "Médico / Salud", "detalle": "24 locales en planta baja y segundo nivel. Farmacia, laboratorio y consultorios" },
+    { "nombre": "De la Mujer", "detalle": "Accesorios, moda, servicios de belleza y bienestar especializados" },
+    { "nombre": "Autoservicio", "detalle": "Tiendas de conveniencia, supermercado de proximidad y autoservicio" },
+    { "nombre": "Deporte / Fitness", "detalle": "15 locales. Gimnasio, ropa deportiva y 2 canchas de pádel con isla independiente" },
+    { "nombre": "Mercadito", "detalle": "134 locales: antojería, tecnología y accesorios para mujer. El corazón del distrito" },
+    { "nombre": "Pabellón Central", "detalle": "15 pop-up stores en corredor central ajardinado. Espacios flexibles de temporada" },
+    { "nombre": "Coworking", "detalle": "1 espacio de trabajo compartido con terraza. Ideal para profesionistas de la zona" }
+  ],
+  "contexto_mercado": {
+    "titulo": "¿Por qué invertir en Zona Norponiente?",
+    "puntos": [
+      "Zona con el mayor crecimiento urbano de Querétaro en la última década",
+      "Alta carencia de comercios y servicios: demanda insatisfecha en zona consolidada",
+      "622+ hectáreas urbanizadas con vivienda residencial media y alta",
+      "281,000 personas en radio de 5 km con poder adquisitivo medio-alto",
+      "Inmigración creciente de profesionistas jóvenes y familias",
+      "Los negocios en la zona crecieron 17x entre 2019 y 2024",
+      "70,000 autos al día por Libramiento Norponiente y Av. de la Luz",
+      "Cine como ancla principal garantiza afluencia constante"
+    ]
+  },
+  "imagenes": [
+    "https://images.unsplash.com/photo-1555636222-cae831e670b3?w=1200&q=80",
+    "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1200&q=80",
+    "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&q=80",
+    "https://images.unsplash.com/photo-1567449303078-57ad995bd329?w=1200&q=80",
+    "https://images.unsplash.com/photo-1534430480872-3498386e7856?w=1200&q=80",
+    "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200&q=80"
+  ],
+  "imagen_portada": "https://images.unsplash.com/photo-1555636222-cae831e670b3?w=800&q=80",
+  "whatsapp_mensaje": "Hola Alberto, me interesa información sobre Distrito Comercial 2.17. ¿Pueden asesorarme?",
+  "cta_label": "Solicitar información",
+  "desarrollador": {
+    "nombre": "GESS Inmobiliaria",
+    "descripcion": "Constructora mexicana con más de 34 años de experiencia. Proyectos ejecutados: Estadio de Béisbol Conspiradores, Campanario Norte."
+  },
+  "seo": {
+    "titulo": "Distrito Comercial 2.17 | Locales Comerciales en Querétaro | BLAV",
+    "descripcion": "300 locales en 28,844 m² en la zona de mayor crecimiento de Querétaro. Afluencia estimada de +160,000 visitas semanales. Solicita información.",
+    "og_imagen": "https://images.unsplash.com/photo-1555636222-cae831e670b3?w=1200&q=80"
+  }
+}
