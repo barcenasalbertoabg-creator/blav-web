@@ -3,23 +3,33 @@ import AnimatedSection from "@/components/ui/AnimatedSection";
 const diferenciadores = [
   {
     num: "01",
-    titulo: "Asesoría personalizada",
-    desc: "Un asesor dedicado te acompaña desde la búsqueda inicial hasta el cierre. Sin intermediarios adicionales ni colas de espera.",
+    titulo: "Atención personalizada",
+    desc: "Un asesor dedicado te acompaña en cada etapa del proceso. Sin intermediarios, sin filas de espera: trato directo y cercano.",
   },
   {
     num: "02",
-    titulo: "Conocimiento local profundo",
-    desc: "Operamos exclusivamente en Querétaro y Guanajuato. Conocemos cada zona, tendencia de precios y oportunidad del mercado.",
+    titulo: "Acompañamiento integral",
+    desc: "Estamos contigo desde la búsqueda inicial hasta la firma final. Coordinamos trámites, notaría y financiamiento para que no tengas que preocuparte.",
   },
   {
     num: "03",
-    titulo: "Proyectos verificados",
-    desc: "Solo presentamos proyectos con desarrolladores sólidos, documentación en regla y potencial real de plusvalía.",
+    titulo: "Conocimiento del mercado",
+    desc: "Operamos exclusivamente en Querétaro y Guanajuato. Conocemos cada zona, tendencias de precios y las mejores oportunidades de plusvalía.",
   },
   {
     num: "04",
-    titulo: "Sin cobro de consulta",
-    desc: "La asesoría inicial es gratuita. Nuestros honorarios se integran en la operación y son transparentes desde el primer día.",
+    titulo: "Compra, renta e inversión",
+    desc: "Cubrimos todo el espectro inmobiliario: vivienda, comercio, industria e inversión. Una sola agencia para todas tus necesidades.",
+  },
+  {
+    num: "05",
+    titulo: "Seguimiento ágil",
+    desc: "Respuesta rápida y comunicación constante. Nunca quedas sin saber qué sigue en tu proceso.",
+  },
+  {
+    num: "06",
+    titulo: "Profesionalismo y confianza",
+    desc: "Trabajamos con transparencia, ética y documentación en regla. Tu tranquilidad es nuestra prioridad en cada operación.",
   },
 ];
 
