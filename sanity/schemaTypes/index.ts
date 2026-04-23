@@ -1,4 +1,6 @@
-import { projectType } from "./project";
+import { projectType }   from "./project";
 import { propiedadType } from "./propiedad";
+import { articuloType }  from "./articulo";
+import { testimonioType } from "./testimonio";
 
-export const schemaTypes = [projectType, propiedadType];
+export const schemaTypes = [projectType, propiedadType, articuloType, testimonioType];

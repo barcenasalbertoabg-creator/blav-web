@@ -2,7 +2,7 @@ import type { PortableTextBlock } from "./project";
 
 export type TipoPropiedad = "casa" | "departamento" | "local" | "bodega" | "terreno" | "oficina";
 export type OperacionPropiedad = "venta" | "renta" | "preventa";
-export type EstadoPropiedad = "disponible" | "reservado" | "cerrado";
+export type EstadoPropiedad = "disponible" | "reservado" | "vendido" | "rentado" | "cerrado";
 
 export interface PropiedadSEO {
   titulo: string;

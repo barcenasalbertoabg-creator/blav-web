@@ -1,6 +1,7 @@
 import { client } from "@/../../sanity/lib/client";
 import {
   ALL_PROPIEDADES_QUERY,
+  FEATURED_PROPIEDADES_QUERY,
   PROPIEDAD_BY_SLUG_QUERY,
   ALL_PROPIEDAD_SLUGS_QUERY,
 } from "@/../../sanity/lib/queries";
@@ -66,6 +67,16 @@ export async function getPropiedadSlugs(): Promise<string[]> {
   try {
     const slugs: (string | null)[] = await client.fetch(ALL_PROPIEDAD_SLUGS_QUERY);
     return (slugs ?? []).filter((s): s is string => !!s);
+  } catch {
+    return [];
+  }
+}
+
+export async function getFeaturedPropiedades(): Promise<Propiedad[]> {
+  if (!isSanityConfigured()) return [];
+  try {
+    const raw: SanityPropiedadRaw[] = await client.fetch(FEATURED_PROPIEDADES_QUERY);
+    return (raw ?? []).map(normalizePropiedad);
   } catch {
     return [];
   }

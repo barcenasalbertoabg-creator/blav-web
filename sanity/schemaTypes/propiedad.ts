@@ -74,9 +74,11 @@ export const propiedadType = defineType({
       group: "info",
       options: {
         list: [
-          { title: "✅ Disponible",  value: "disponible" },
+          { title: "✅ Disponible", value: "disponible" },
           { title: "🔒 Reservado",  value: "reservado" },
-          { title: "🏁 Vendido / Rentado", value: "cerrado" },
+          { title: "🏷️ Vendida",    value: "vendido" },
+          { title: "🔑 Rentada",    value: "rentado" },
+          { title: "🏁 Cerrado (legacy)", value: "cerrado" },
         ],
         layout: "radio",
       },

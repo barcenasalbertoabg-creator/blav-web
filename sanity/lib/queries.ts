@@ -1,5 +1,4 @@
 // Proyección reutilizable para normalizar imágenes
-// coalesce(urlExterna, asset->url) → URL string en ambos casos
 const IMAGE_FIELDS = `{
   "urlExterna": urlExterna,
   "asset": asset->{ url, _id }
@@ -105,6 +104,13 @@ export const ALL_PROPIEDADES_QUERY = `
   }
 `;
 
+// Destacadas en home: incluye vendidas/rentadas para mostrar badge (social proof)
+export const FEATURED_PROPIEDADES_QUERY = `
+  *[_type == "propiedad" && destacado == true][0...4] | order(_createdAt desc) {
+    ${PROPIEDAD_FIELDS}
+  }
+`;
+
 export const PROPIEDAD_BY_SLUG_QUERY = `
   *[_type == "propiedad" && slug.current == $slug][0] {
     ${PROPIEDAD_FIELDS}
@@ -113,4 +119,51 @@ export const PROPIEDAD_BY_SLUG_QUERY = `
 
 export const ALL_PROPIEDAD_SLUGS_QUERY = `
   *[_type == "propiedad"]{ "slug": slug.current }.slug
+`;
+
+// ── ARTÍCULOS DE BLOG ────────────────────────────────────────────────────────
+
+const ARTICULO_FIELDS = `
+  "slug": slug.current,
+  titulo,
+  "categoria": coalesce(categoria, "consejos"),
+  "descripcion_corta": descripcionCorta,
+  "imagenPortadaRaw": imagenPortada ${IMAGE_FIELDS},
+  fecha,
+  "tiempo_lectura": tiempoLectura,
+  contenido,
+  "seo": seo{
+    titulo,
+    descripcion,
+    "ogImagenRaw": ogImagen ${IMAGE_FIELDS}
+  }
+`;
+
+export const ALL_ARTICULOS_QUERY = `
+  *[_type == "articulo"] | order(fecha desc) {
+    ${ARTICULO_FIELDS}
+  }
+`;
+
+export const ARTICULO_BY_SLUG_QUERY = `
+  *[_type == "articulo" && slug.current == $slug][0] {
+    ${ARTICULO_FIELDS}
+  }
+`;
+
+export const ALL_ARTICULO_SLUGS_QUERY = `
+  *[_type == "articulo"]{ "slug": slug.current }.slug
+`;
+
+// ── TESTIMONIOS ───────────────────────────────────────────────────────────────
+
+export const FEATURED_TESTIMONIOS_QUERY = `
+  *[_type == "testimonio" && destacado == true] | order(_createdAt asc) {
+    nombre,
+    "cargo_o_tipo_operacion": cargoOTipoOperacion,
+    texto,
+    calificacion,
+    "fotoRaw": foto ${IMAGE_FIELDS},
+    destacado
+  }
 `;

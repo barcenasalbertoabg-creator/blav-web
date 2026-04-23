@@ -15,12 +15,21 @@ function formatPrecio(precio: number, moneda: string): string {
   }).format(precio);
 }
 
+function getBadge(estado: Propiedad["estado"]): string | null {
+  if (estado === "vendido") return "VENDIDA";
+  if (estado === "rentado") return "RENTADA";
+  if (estado === "cerrado") return "NO DISPONIBLE";
+  return null;
+}
+
 export default function PropiedadCard({ propiedad }: Props) {
   const {
-    slug, titulo, tipo, operacion, descripcion_corta,
+    slug, titulo, tipo, operacion, estado, descripcion_corta,
     precio, mostrar_precio, moneda, nota_precio,
     imagen_portada, superficie, recamaras, banos, ubicacion,
   } = propiedad;
+
+  const badge = getBadge(estado);
 
   return (
     <Link
@@ -34,7 +43,7 @@ export default function PropiedadCard({ propiedad }: Props) {
             src={imagen_portada}
             alt={titulo}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            className={`object-cover transition-transform duration-500 ${badge ? "opacity-70" : "group-hover:scale-105"}`}
             unoptimized
           />
         ) : (
@@ -42,6 +51,15 @@ export default function PropiedadCard({ propiedad }: Props) {
             {TIPO_ICON[tipo]}
           </div>
         )}
+
+        {/* Badge VENDIDA / RENTADA */}
+        {badge && (
+          <div className="absolute top-0 right-0 bg-red-600 text-white font-sans text-xs font-bold tracking-[0.15em] px-3 py-1.5">
+            {badge}
+          </div>
+        )}
+
+        {/* Labels tipo y operación */}
         <div className="absolute top-4 left-4 flex gap-2">
           <span className="gold-label bg-white/90 backdrop-blur-sm">
             {TIPO_ICON[tipo]} {TIPO_LABEL[tipo]}
@@ -92,7 +110,11 @@ export default function PropiedadCard({ propiedad }: Props) {
         {/* Precio */}
         <div className="flex items-end justify-between">
           <div>
-            {mostrar_precio && precio ? (
+            {badge ? (
+              <p className="font-sans text-xs text-red-500 font-semibold tracking-wide">
+                {badge === "NO DISPONIBLE" ? "No disponible" : badge === "VENDIDA" ? "Propiedad vendida" : "Propiedad rentada"}
+              </p>
+            ) : mostrar_precio && precio ? (
               <p className="font-display text-lg font-semibold text-gold">
                 {formatPrecio(precio, moneda)}
                 <span className="font-sans text-xs text-blav-grayMid ml-1">{moneda}</span>
