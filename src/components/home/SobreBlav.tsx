@@ -16,7 +16,7 @@ export default function SobreBlav() {
               <div className="absolute inset-0 border border-gold/30 translate-x-4 translate-y-4" />
               <div className="relative w-full h-full overflow-hidden bg-blav-gray">
                 <Image
-                  src="/images/alberto-barcenas.jpg"
+                  src="/images/alberto-barcenas.png"
                   alt="Alberto Bárcenas — Fundador y Director Comercial de BLAV"
                   fill
                   className="object-cover object-top"
