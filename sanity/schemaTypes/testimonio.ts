@@ -41,6 +41,16 @@ export const testimonioType = defineType({
       ],
     }),
     defineField({
+      name: "fotoOperacion",
+      title: "Foto de la propiedad (opcional)",
+      description: "Imagen de la casa, depto o local de la operación realizada",
+      type: "image",
+      options: { hotspot: true },
+      fields: [
+        defineField({ name: "urlExterna", title: "URL externa", type: "url" }),
+      ],
+    }),
+    defineField({
       name: "destacado",
       title: "⭐ Mostrar en inicio",
       type: "boolean",

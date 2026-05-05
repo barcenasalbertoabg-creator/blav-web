@@ -69,12 +69,20 @@ export default async function Testimonios() {
                       </span>
                     </div>
                   )}
-                  <div>
+                  <div className="flex-1 min-w-0">
                     <p className="font-sans text-sm font-semibold text-white">{t.nombre}</p>
                     <p className="font-sans text-xs text-white/50 mt-0.5">
                       {t.cargo_o_tipo_operacion}
                     </p>
                   </div>
+                  {t.foto_operacion && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={t.foto_operacion}
+                      alt="Propiedad"
+                      className="w-16 h-12 object-cover shrink-0 opacity-70"
+                    />
+                  )}
                 </div>
               </div>
             </AnimatedSection>

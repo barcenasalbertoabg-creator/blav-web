@@ -18,6 +18,7 @@ function formatPrecio(precio: number, moneda: string): string {
 function getBadge(estado: Propiedad["estado"]): string | null {
   if (estado === "vendido") return "VENDIDA";
   if (estado === "rentado") return "RENTADA";
+  if (estado === "reservado") return "APARTADA";
   if (estado === "cerrado") return "NO DISPONIBLE";
   return null;
 }
@@ -112,7 +113,7 @@ export default function PropiedadCard({ propiedad }: Props) {
           <div>
             {badge ? (
               <p className="font-sans text-xs text-red-500 font-semibold tracking-wide">
-                {badge === "NO DISPONIBLE" ? "No disponible" : badge === "VENDIDA" ? "Propiedad vendida" : "Propiedad rentada"}
+                {badge === "VENDIDA" ? "Propiedad vendida" : badge === "RENTADA" ? "Propiedad rentada" : badge === "APARTADA" ? "Propiedad apartada" : "No disponible"}
               </p>
             ) : mostrar_precio && precio ? (
               <p className="font-display text-lg font-semibold text-gold">

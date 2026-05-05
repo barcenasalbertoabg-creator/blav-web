@@ -99,7 +99,7 @@ const PROPIEDAD_FIELDS = `
 `;
 
 export const ALL_PROPIEDADES_QUERY = `
-  *[_type == "propiedad" && estado == "disponible"] | order(destacado desc, _createdAt desc) {
+  *[_type == "propiedad"] | order(destacado desc, _createdAt desc) {
     ${PROPIEDAD_FIELDS}
   }
 `;
@@ -164,6 +164,7 @@ export const FEATURED_TESTIMONIOS_QUERY = `
     texto,
     calificacion,
     "fotoRaw": foto ${IMAGE_FIELDS},
+    "fotoOperacionRaw": fotoOperacion ${IMAGE_FIELDS},
     destacado
   }
 `;

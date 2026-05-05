@@ -9,16 +9,21 @@ export interface Testimonio {
   texto: string;
   calificacion: number;
   foto?: string;
+  foto_operacion?: string;
   destacado: boolean;
 }
 
 type SanityImageRaw = { urlExterna?: string | null; asset?: { url?: string; _id?: string } | null };
-type SanityTestimonioRaw = Omit<Testimonio, "foto"> & { fotoRaw?: SanityImageRaw };
+type SanityTestimonioRaw = Omit<Testimonio, "foto" | "foto_operacion"> & {
+  fotoRaw?: SanityImageRaw;
+  fotoOperacionRaw?: SanityImageRaw;
+};
 
 function normalizeTestimonio(raw: SanityTestimonioRaw): Testimonio {
   return {
     ...raw,
     foto: raw.fotoRaw ? resolveImageUrl(raw.fotoRaw) : undefined,
+    foto_operacion: raw.fotoOperacionRaw ? resolveImageUrl(raw.fotoOperacionRaw) : undefined,
   };
 }
 
