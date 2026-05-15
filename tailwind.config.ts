@@ -18,6 +18,7 @@ const config: Config = {
           black: "#0D0D0D",
           gray: "#F5F5F0",
           grayMid: "#6B6B6B",
+          navy: "#0d1b2e",
         },
         whatsapp: "#25D366",
       },
