@@ -88,9 +88,9 @@ export default function OpinionDeValorPage() {
             {/* Caja con borde dorado */}
             <div className="border-l-4 border-gold pl-6 py-2">
               <p className="font-sans text-white/70 text-sm md:text-base leading-relaxed italic">
-                "Puedes tener las mejores fotos, la descripción perfecta y responder al instante —
+                &ldquo;Puedes tener las mejores fotos, la descripción perfecta y responder al instante —
                 pero si el precio no es el correcto, la propiedad se queda en el mercado. Y cada mes
-                que pasa tiene un costo real."
+                que pasa tiene un costo real.&rdquo;
               </p>
             </div>
           </AnimatedSection>
