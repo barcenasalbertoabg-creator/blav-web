@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+
+  <!-- Fondo navy -->
+  <rect width="800" height="500" fill="#0d1b2e"/>
+
+  <!-- Barra dorada superior (40px alto) -->
+  <rect x="0" y="0" width="800" height="42" fill="#c8a84a"/>
+  <text x="400" y="21" text-anchor="middle" dominant-baseline="middle"
+        font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="600"
+        fill="white" letter-spacing="5">BLAV BIENES RA&#205;CES</text>
+
+  <!-- Línea delgada dorada separadora -->
+  <rect x="0" y="42" width="800" height="1" fill="#c8a84a" opacity="0.6"/>
+
+  <!-- Label OVC -->
+  <text x="400" y="82" text-anchor="middle" dominant-baseline="middle"
+        font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#c8a84a" letter-spacing="4">
+    OPINI&#211;N DE VALOR COMERCIAL
+  </text>
+
+  <!-- Línea decorativa superior -->
+  <rect x="240" y="106" width="320" height="1" fill="#c8a84a" opacity="0.35"/>
+
+  <!-- Título principal -->
+  <text x="400" y="178" text-anchor="middle" dominant-baseline="middle"
+        font-family="Georgia, 'Times New Roman', serif" font-size="33" fill="white">
+    Departamento Planta Baja
+  </text>
+
+  <!-- Subtítulo dorado -->
+  <text x="400" y="220" text-anchor="middle" dominant-baseline="middle"
+        font-family="Georgia, 'Times New Roman', serif" font-size="18" fill="#c8a84a">
+    San Patricio &#183; Sendas Residencial
+  </text>
+
+  <!-- Ubicación y fecha en gris azulado -->
+  <text x="400" y="252" text-anchor="middle" dominant-baseline="middle"
+        font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#8a9ab0">
+    El Marqu&#233;s, Quer&#233;taro &#183; Mayo 2025
+  </text>
+
+  <!-- Línea decorativa inferior -->
+  <rect x="240" y="278" width="320" height="1" fill="#c8a84a" opacity="0.35"/>
+
+  <!-- 4 cajas: x=41,223,405,587 ancho=172 alto=102 -->
+  <!-- Caja 1 — Mayo 2025 -->
+  <rect x="41" y="316" width="172" height="102" fill="#162540"/>
+  <text x="127" y="346" text-anchor="middle" dominant-baseline="middle"
+        font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#c8a84a" letter-spacing="2">FECHA</text>
+  <rect x="63" y="356" width="128" height="1" fill="#c8a84a" opacity="0.25"/>
+  <text x="127" y="390" text-anchor="middle" dominant-baseline="middle"
+        font-family="Georgia, 'Times New Roman', serif" font-size="17" fill="#c8a84a">Mayo 2025</text>
+
+  <!-- Caja 2 — 67 m² -->
+  <rect x="223" y="316" width="172" height="102" fill="#162540"/>
+  <text x="309" y="346" text-anchor="middle" dominant-baseline="middle"
+        font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#c8a84a" letter-spacing="2">SUPERFICIE</text>
+  <rect x="245" y="356" width="128" height="1" fill="#c8a84a" opacity="0.25"/>
+  <text x="309" y="390" text-anchor="middle" dominant-baseline="middle"
+        font-family="Georgia, 'Times New Roman', serif" font-size="17" fill="#c8a84a">67 m&#178;</text>
+
+  <!-- Caja 3 — $1,400,000 -->
+  <rect x="405" y="316" width="172" height="102" fill="#162540"/>
+  <text x="491" y="346" text-anchor="middle" dominant-baseline="middle"
+        font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#c8a84a" letter-spacing="2">PRECIO</text>
+  <rect x="427" y="356" width="128" height="1" fill="#c8a84a" opacity="0.25"/>
+  <text x="491" y="390" text-anchor="middle" dominant-baseline="middle"
+        font-family="Georgia, 'Times New Roman', serif" font-size="17" fill="#c8a84a">$1,400,000</text>
+
+  <!-- Caja 4 — 90 días -->
+  <rect x="587" y="316" width="172" height="102" fill="#162540"/>
+  <text x="673" y="346" text-anchor="middle" dominant-baseline="middle"
+        font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#c8a84a" letter-spacing="2">TIEMPO EST.</text>
+  <rect x="609" y="356" width="128" height="1" fill="#c8a84a" opacity="0.25"/>
+  <text x="673" y="390" text-anchor="middle" dominant-baseline="middle"
+        font-family="Georgia, 'Times New Roman', serif" font-size="17" fill="#c8a84a">90 d&#237;as</text>
+
+  <!-- Barra dorada inferior -->
+  <rect x="0" y="456" width="800" height="3" fill="#c8a84a" opacity="0.45"/>
+
+</svg>

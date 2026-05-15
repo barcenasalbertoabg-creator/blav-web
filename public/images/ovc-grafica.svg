@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+
+  <!-- Fondo blanco -->
+  <rect width="800" height="500" fill="white"/>
+
+  <!-- Borde superior navy -->
+  <rect x="0" y="0" width="800" height="4" fill="#0d1b2e"/>
+
+  <!-- Título -->
+  <text x="400" y="34" text-anchor="middle" dominant-baseline="middle"
+        font-family="Georgia, 'Times New Roman', serif" font-size="22" fill="#0d1b2e">
+    Posicionamiento en Mercado
+  </text>
+
+  <!-- Subtítulo -->
+  <text x="400" y="56" text-anchor="middle" dominant-baseline="middle"
+        font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#9ca3af" letter-spacing="1">
+    PRECIO DE OFERTA ACTIVA &#183; MAYO 2025 &#183; SENDAS RESIDENCIAL Y ZONA
+  </text>
+
+  <!-- Líneas de cuadrícula verticales (25%, 50%, 75%) -->
+  <!-- Área de barras: x=188 a x=695 → 507px de ancho -->
+  <!-- 25%: x=188+127=315  50%: x=188+254=442  75%: x=188+380=568 -->
+  <line x1="315" y1="74" x2="315" y2="428" stroke="#e5e7eb" stroke-width="1"/>
+  <line x1="442" y1="74" x2="442" y2="428" stroke="#e5e7eb" stroke-width="1"/>
+  <line x1="568" y1="74" x2="568" y2="428" stroke="#e5e7eb" stroke-width="1"/>
+
+  <!-- Etiquetas de cuadrícula -->
+  <text x="315" y="72" text-anchor="middle" dominant-baseline="auto"
+        font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#d1d5db">$1.10M</text>
+  <text x="442" y="72" text-anchor="middle" dominant-baseline="auto"
+        font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#d1d5db">$1.25M</text>
+  <text x="568" y="72" text-anchor="middle" dominant-baseline="auto"
+        font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#d1d5db">$1.40M</text>
+
+  <!-- Eje vertical -->
+  <line x1="188" y1="74" x2="188" y2="430" stroke="#d1d5db" stroke-width="1.5"/>
+
+  <!-- ══ BARRAS (y inicio, altura=30px, gap=25px → grupo=55px) ══ -->
+  <!-- Barra area x=188 max_width=507 -->
+
+  <!-- D3 · Paseos Mq. · 30% → 152px · y=82 -->
+  <text x="182" y="97" text-anchor="end" dominant-baseline="middle"
+        font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#6b7280">D3  Paseos Mq.</text>
+  <rect x="188" y="82" width="152" height="30" fill="#0d1b2e" rx="1"/>
+  <text x="350" y="97" text-anchor="start" dominant-baseline="middle"
+        font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#374151">$1,105,000</text>
+
+  <!-- D2 · Sendas PB · 49% → 248px · y=137 -->
+  <text x="182" y="152" text-anchor="end" dominant-baseline="middle"
+        font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#6b7280">D2  Sendas PB</text>
+  <rect x="188" y="137" width="248" height="30" fill="#0d1b2e" rx="1"/>
+  <text x="446" y="152" text-anchor="start" dominant-baseline="middle"
+        font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#374151">$1,240,000</text>
+
+  <!-- D1 · San Patricio PB · 50% → 254px · y=192 -->
+  <text x="182" y="207" text-anchor="end" dominant-baseline="middle"
+        font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#6b7280">D1  San Patricio PB</text>
+  <rect x="188" y="192" width="254" height="30" fill="#0d1b2e" rx="1"/>
+  <text x="452" y="207" text-anchor="start" dominant-baseline="middle"
+        font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#374151">$1,245,000</text>
+
+  <!-- D4 · Sendas activo · 57% → 289px · y=247 -->
+  <text x="182" y="262" text-anchor="end" dominant-baseline="middle"
+        font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#6b7280">D4  Sendas activo</text>
+  <rect x="188" y="247" width="289" height="30" fill="#0d1b2e" rx="1"/>
+  <text x="487" y="262" text-anchor="start" dominant-baseline="middle"
+        font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#374151">$1,299,362</text>
+
+  <!-- ◆ SUJETO · 75% → 380px · y=302 (dorado, borde, negrita) -->
+  <!-- Highlight de fondo para la fila sujeto -->
+  <rect x="0" y="295" width="800" height="44" fill="#fdf8ee" opacity="0.7"/>
+  <text x="182" y="319" text-anchor="end" dominant-baseline="middle"
+        font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#0d1b2e" font-weight="700">&#9670; SUJETO</text>
+  <rect x="188" y="302" width="380" height="34" fill="#c8a84a" rx="1" stroke="#9d7e2a" stroke-width="1.5"/>
+  <text x="578" y="319" text-anchor="start" dominant-baseline="middle"
+        font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#0d1b2e" font-weight="700">$1,400,000</text>
+  <!-- Label sobre barra del sujeto -->
+  <text x="378" y="319" text-anchor="middle" dominant-baseline="middle"
+        font-family="Arial, Helvetica, sans-serif" font-size="10" fill="white" font-weight="600">PRECIO RECOMENDADO</text>
+
+  <!-- D6 · Con equipamiento · 85% → 431px · y=357 -->
+  <text x="182" y="374" text-anchor="end" dominant-baseline="middle"
+        font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#6b7280">D6  Con equipamiento</text>
+  <rect x="188" y="357" width="431" height="30" fill="#0d1b2e" rx="1"/>
+  <text x="629" y="374" text-anchor="start" dominant-baseline="middle"
+        font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#374151">$1,465,000</text>
+
+  <!-- Línea base inferior -->
+  <line x1="188" y1="428" x2="700" y2="428" stroke="#e5e7eb" stroke-width="1"/>
+
+  <!-- Nota al pie -->
+  <text x="18" y="458" text-anchor="start" dominant-baseline="middle"
+        font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#9ca3af">
+    Las barras representan el precio de oferta relativo al rango del mercado analizado. &#9670; SUJETO = propiedad analizada.
+  </text>
+  <text x="18" y="476" text-anchor="start" dominant-baseline="middle"
+        font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#9ca3af">
+    BLAV Bienes Ra&#237;ces &#183; Opini&#243;n de Valor Comercial &#183; Mayo 2025
+  </text>
+
+</svg>

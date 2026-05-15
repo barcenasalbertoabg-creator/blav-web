@@ -61,9 +61,9 @@ const comparativa = [
 ];
 
 const ejemplos = [
-  { caption: "Portada del documento" },
-  { caption: "Tabla de comparables" },
-  { caption: "Gráfica de posicionamiento" },
+  { src: "/images/ovc-portada.svg", caption: "Portada del documento" },
+  { src: "/images/ovc-comparables.svg", caption: "Tabla de comparables" },
+  { src: "/images/ovc-grafica.svg", caption: "Gráfica de posicionamiento" },
 ];
 
 export default function OpinionDeValorPage() {
@@ -223,24 +223,15 @@ export default function OpinionDeValorPage() {
           </AnimatedSection>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {ejemplos.map(({ caption }, i) => (
+            {ejemplos.map(({ src, caption }, i) => (
               <AnimatedSection key={caption} delay={i * 0.1}>
                 <div className="flex flex-col gap-3">
-                  {/* Placeholder de imagen — reemplazar con <Image> cuando estén listos los archivos */}
-                  <div className="aspect-[4/3] bg-blav-gray flex items-center justify-center border border-blav-gray/80">
-                    <div className="text-center">
-                      <svg
-                        viewBox="0 0 24 24"
-                        className="w-10 h-10 text-blav-grayMid/40 mx-auto mb-2"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={1}
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                      </svg>
-                      <p className="font-sans text-xs text-blav-grayMid/60">Imagen próximamente</p>
-                    </div>
-                  </div>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={src}
+                    alt={caption}
+                    className="w-full h-auto border border-blav-gray/60 shadow-sm"
+                  />
                   <p className="font-sans text-xs text-blav-grayMid tracking-widest uppercase text-center">
                     {caption}
                   </p>
