@@ -41,7 +41,9 @@ export interface Propiedad {
     zona?: string;
     descripcion?: string;
     maps_url?: string;
+    coordenadas?: { lat: number; lng: number } | null;
   } | null;
+  mantenimiento?: number | null;
   whatsapp_mensaje: string;
   cta_label: string;
   seo: PropiedadSEO;

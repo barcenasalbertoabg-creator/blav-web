@@ -15,8 +15,10 @@ const PROJECT_FIELDS = `
     zona,
     descripcion,
     maps_url,
-    "maps_embed_url": ""
+    "maps_embed_url": "",
+    "coordenadas": coordenadas{ lat, lng }
   },
+  amenidades,
   "precio_desde": precioDesde,
   "moneda": coalesce(moneda, "MXN"),
   "nota_precio": notaPrecio,
@@ -88,7 +90,14 @@ const PROPIEDAD_FIELDS = `
   amenidades,
   "caracteristicas": caracteristicas[]{ label, valor },
   "descripcion_larga": descripcionLarga,
-  "ubicacion": ubicacion{ ciudad, zona, descripcion, maps_url },
+  "ubicacion": ubicacion{
+    ciudad,
+    zona,
+    descripcion,
+    maps_url,
+    "coordenadas": coordenadas{ lat, lng }
+  },
+  mantenimiento,
   "whatsapp_mensaje": whatsappMensaje,
   "cta_label": ctaLabel,
   "seo": seo{

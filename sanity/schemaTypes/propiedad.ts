@@ -235,6 +235,13 @@ export const propiedadType = defineType({
       description: 'Ej: "Nueva", "5 años", "A estrenar"',
     }),
     defineField({
+      name: "mantenimiento",
+      title: "Cuota de mantenimiento mensual (MXN)",
+      type: "number",
+      group: "details",
+      description: "Solo se muestra en la ficha técnica cuando la operación es venta.",
+    }),
+    defineField({
       name: "amenidades",
       title: "Amenidades (opcional)",
       type: "array",
@@ -313,6 +320,12 @@ export const propiedadType = defineType({
           title: "URL de Google Maps",
           type: "url",
           description: "Link de Maps para el botón 'Ver ubicación'",
+        }),
+        defineField({
+          name: "coordenadas",
+          title: "Coordenadas (para mapa en PDF)",
+          type: "geopoint",
+          description: "Opcional. Si se deja vacío pero maps_url contiene @lat,lng, se extrae automáticamente para el PDF.",
         }),
       ],
     }),

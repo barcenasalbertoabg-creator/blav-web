@@ -11,6 +11,7 @@ import ProjectContexto from "@/components/proyectos/ProjectContexto";
 import ShareButtons from "@/components/proyectos/ShareButtons";
 import LeadForm from "@/components/ui/LeadForm";
 import AnimatedSection from "@/components/ui/AnimatedSection";
+import FichaTecnicaButton from "@/components/ui/FichaTecnicaButton";
 
 // Revalida cada 60 segundos — cambios en Sanity aparecen en ~1 min
 export const revalidate = 60;
@@ -200,6 +201,15 @@ export default async function ProyectoPage({ params }: Props) {
                 <div className="bg-white border border-blav-gray p-6">
                   <h3 className="font-display text-lg font-semibold text-blav-black mb-5">Solicitar información</h3>
                   <LeadForm projects={projectNames} defaultProject={project.nombre} />
+                </div>
+              </AnimatedSection>
+
+              <AnimatedSection delay={0.2}>
+                <div className="border border-blav-gray p-6">
+                  <h3 className="font-display text-sm font-semibold text-blav-black mb-4">
+                    Ficha técnica
+                  </h3>
+                  <FichaTecnicaButton tipo="proyecto" slug={project.slug} />
                 </div>
               </AnimatedSection>
             </div>

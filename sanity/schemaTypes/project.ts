@@ -219,6 +219,23 @@ export const projectType = defineType({
       ],
     }),
     defineField({
+      name: "amenidades",
+      title: "Amenidades (opcional)",
+      type: "array",
+      group: "content",
+      description: "Lista de amenidades o servicios del proyecto.",
+      of: [defineArrayMember({ type: "string" })],
+      options: {
+        list: [
+          "Alberca", "Gimnasio", "Vigilancia 24/7", "Área verde",
+          "Salón de eventos", "Roof garden", "Bodega", "Elevador",
+          "Estacionamiento de visitas", "Circuito cerrado",
+          "Pet friendly", "Acceso controlado",
+        ],
+        layout: "grid",
+      },
+    }),
+    defineField({
       name: "pabellones",
       title: "Pabellones o zonas",
       type: "array",
@@ -280,6 +297,12 @@ export const projectType = defineType({
           title: "URL de Google Maps",
           type: "url",
           description: "Link corto de Google Maps para el botón 'Ver en Maps'",
+        }),
+        defineField({
+          name: "coordenadas",
+          title: "Coordenadas (para mapa en PDF)",
+          type: "geopoint",
+          description: "Opcional. Si se deja vacío pero maps_url contiene @lat,lng, se extrae automáticamente para el PDF.",
         }),
       ],
     }),

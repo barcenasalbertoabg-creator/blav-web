@@ -18,6 +18,7 @@ export interface ProjectUbicacion {
   descripcion: string;
   maps_url: string;
   maps_embed_url: string;
+  coordenadas?: { lat: number; lng: number } | null;
 }
 
 export interface CifrasClave {
@@ -69,6 +70,7 @@ export interface Project {
   caracteristicas: Caracteristica[];
   pabellones?: Pabellon[];
   contexto_mercado?: ContextoMercado;
+  amenidades?: string[] | null;
   imagenes: string[];
   imagen_portada: string;
   whatsapp_mensaje: string;

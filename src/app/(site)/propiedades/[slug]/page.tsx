@@ -9,6 +9,7 @@ import ProjectGallery from "@/components/proyectos/ProjectGallery";
 import ShareButtons from "@/components/proyectos/ShareButtons";
 import LeadForm from "@/components/ui/LeadForm";
 import AnimatedSection from "@/components/ui/AnimatedSection";
+import FichaTecnicaButton from "@/components/ui/FichaTecnicaButton";
 
 export const revalidate = 60;
 
@@ -270,6 +271,15 @@ export default async function PropiedadPage({ params }: Props) {
                     Solicitar información
                   </h3>
                   <LeadForm projects={propiedadNames} defaultProject={p.titulo} />
+                </div>
+              </AnimatedSection>
+
+              <AnimatedSection delay={0.2}>
+                <div className="border border-blav-gray p-6">
+                  <h3 className="font-display text-sm font-semibold text-blav-black mb-4">
+                    Ficha técnica
+                  </h3>
+                  <FichaTecnicaButton tipo="propiedad" slug={p.slug} />
                 </div>
               </AnimatedSection>
             </div>
