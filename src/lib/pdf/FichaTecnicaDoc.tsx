@@ -17,6 +17,22 @@ const C = {
   border: "#E8E4E0",
 };
 
+// ── Layout constants (A4 portrait = 595×842 pt, padding 36 each side) ──────
+const CW = 595 - 36 - 36; // 523 pt — usable content width
+
+// Page 1 image row
+const ROW_H = 158;
+const IMG_GAP = 5;
+const MAIN_W = Math.round((CW - IMG_GAP) * (2 / 3)); // ~345 pt
+const SEC_W = CW - MAIN_W - IMG_GAP;                  // ~173 pt
+const SEC_GAP = 5;
+const SEC_H = Math.floor((ROW_H - SEC_GAP) / 2);      // ~76 pt
+
+// Gallery page
+const GAL_GAP = 6;
+const GAL_W = Math.floor((CW - GAL_GAP) / 2); // ~258 pt
+const GAL_H = 155;
+
 const s = StyleSheet.create({
   page: {
     backgroundColor: C.white,
@@ -75,16 +91,6 @@ const s = StyleSheet.create({
   priceLabel: { fontSize: 7, color: C.gold, fontFamily: "Helvetica-Bold", marginRight: 10 },
   priceValue: { fontSize: 17, fontFamily: "Helvetica-Bold", color: C.dark },
 
-  // ── IMAGES ───────────────────────────────────────────────────────
-  imagesRow: { flexDirection: "row", height: 165, marginBottom: 8 },
-  imageMainWrap: { marginRight: 5 },
-  imageMainImg: { width: "100%", height: "100%", objectFit: "cover" },
-  imagesSecCol: { flex: 1, flexDirection: "column" },
-  imageSec: { flex: 1, objectFit: "cover" },
-  imageSecGap: { marginBottom: 5 },
-
-  mapImage: { width: "100%", height: 95, objectFit: "cover", marginBottom: 8 },
-
   // ── SPECS GRID ───────────────────────────────────────────────────
   specsGrid: {
     flexDirection: "row",
@@ -108,7 +114,7 @@ const s = StyleSheet.create({
   specValue: { fontSize: 11, fontFamily: "Helvetica-Bold", color: C.dark },
 
   // ── SECONDARY ROW ────────────────────────────────────────────────
-  secondaryRow: { flexDirection: "row", marginBottom: 10 },
+  secondaryRow: { flexDirection: "row", marginBottom: 8 },
   secChip: {
     backgroundColor: C.gray,
     paddingVertical: 3,
@@ -125,7 +131,7 @@ const s = StyleSheet.create({
     color: C.gold,
     fontFamily: "Helvetica-Bold",
     marginBottom: 4,
-    marginTop: 10,
+    marginTop: 6,
   },
   descText: { fontSize: 8.5, color: C.grayMid, lineHeight: 1.55 },
 
@@ -141,26 +147,14 @@ const s = StyleSheet.create({
   },
   amenidadText: { fontSize: 7.5, color: C.dark },
 
-  // ── FOOTER ───────────────────────────────────────────────────────
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-end",
-    marginTop: 12,
-    paddingTop: 8,
-    borderTopWidth: 1,
-    borderTopColor: C.border,
-  },
-  qrBlock: { alignItems: "center" },
-  qrImage: { width: 56, height: 56, marginBottom: 3 },
-  qrLabel: { fontSize: 6.5, color: C.grayMid, textAlign: "center" },
-  footerSite: { fontSize: 7, color: C.grayMid, textAlign: "right" },
-
   // ── GALLERY PAGE ─────────────────────────────────────────────────
-  galleryTitle: { fontSize: 13, fontFamily: "Helvetica-Bold", color: C.dark, marginBottom: 12, marginTop: 10 },
-  galleryGrid: { flexDirection: "row", flexWrap: "wrap" },
-  galleryImage: { width: "49.5%", height: 170, objectFit: "cover", marginBottom: 6 },
-  galleryImageLeft: { marginRight: "1%" },
+  galleryTitle: {
+    fontSize: 13,
+    fontFamily: "Helvetica-Bold",
+    color: C.dark,
+    marginBottom: 12,
+    marginTop: 10,
+  },
 });
 
 export interface FichaTecnicaDocProps {
@@ -207,37 +201,46 @@ export default function FichaTecnicaDoc({
   const secImg1 = imagenes[0] ?? null;
   const secImg2 = imagenes[1] ?? null;
   const galleryImages = imagenes.slice(2);
+  const galleryRows: [string, string | null][] = [];
+  for (let i = 0; i < galleryImages.length; i += 2) {
+    galleryRows.push([galleryImages[i], galleryImages[i + 1] ?? null]);
+  }
 
   const priceText = mostrarPrecio && precio ? precio : notaPrecio;
 
+  // Footer height estimate (used to reserve bottom space when incluirContacto=true)
+  const FOOTER_H = 80;
+
   return (
     <Document>
-      {/* ── PAGE 1: MAIN CONTENT ─────────────────────────────────── */}
+      {/* ── PAGE 1: MAIN CONTENT ──────────────────────────────────── */}
       <Page size="A4" style={s.page}>
         <View style={s.accentBar} />
 
-        {/* HEADER */}
-        <View style={s.header}>
-          <View style={s.headerLeft}>
-            <Image src={logoBase64} style={s.logo} />
-            <Text style={s.companyName}>BLAV Bienes Raíces</Text>
-            <Text style={s.headerSmall}>Querétaro, Querétaro</Text>
-            <Text style={s.headerSmall}>abarcenas@blav.com.mx</Text>
-            <Text style={s.headerSmall}>+52 442 837 88 91</Text>
-          </View>
-
-          {incluirContacto && albertoBase64 && (
-            <View style={s.headerRight}>
-              <Text style={s.contactLabel}>ASESOR INMOBILIARIO</Text>
-              <Image src={albertoBase64} style={s.agentPhoto} />
-              <Text style={s.agentName}>Alberto Bárcenas Guevara</Text>
+        {/* HEADER — entirely absent when contacto=false */}
+        {incluirContacto && (
+          <View style={s.header}>
+            <View style={s.headerLeft}>
+              <Image src={logoBase64} style={s.logo} />
+              <Text style={s.companyName}>BLAV Bienes Raíces</Text>
+              <Text style={s.headerSmall}>Querétaro, Querétaro</Text>
               <Text style={s.headerSmall}>abarcenas@blav.com.mx</Text>
               <Text style={s.headerSmall}>+52 442 837 88 91</Text>
             </View>
-          )}
-        </View>
 
-        <View style={s.divider} />
+            {albertoBase64 && (
+              <View style={s.headerRight}>
+                <Text style={s.contactLabel}>ASESOR INMOBILIARIO</Text>
+                <Image src={albertoBase64} style={s.agentPhoto} />
+                <Text style={s.agentName}>Alberto Bárcenas Guevara</Text>
+                <Text style={s.headerSmall}>abarcenas@blav.com.mx</Text>
+                <Text style={s.headerSmall}>+52 442 837 88 91</Text>
+              </View>
+            )}
+          </View>
+        )}
+
+        {incluirContacto && <View style={s.divider} />}
 
         {/* TITLE */}
         <View style={s.titleBlock}>
@@ -252,28 +255,53 @@ export default function FichaTecnicaDoc({
           <Text style={s.priceValue}>{priceText}</Text>
         </View>
 
-        {/* IMAGES */}
+        {/* IMAGES — objectFit:"contain" shows full image; gray bg provides letterbox color */}
         {(imagenPortada || secImg1) && (
-          <View style={s.imagesRow}>
+          <View style={{ flexDirection: "row", marginBottom: 8 }}>
             {imagenPortada && (
-              <View style={[{ flex: secImg1 ? 2 : 1 }, secImg1 ? s.imageMainWrap : {}]}>
-                <Image src={imagenPortada} style={s.imageMainImg} />
+              <View
+                style={{
+                  width: secImg1 ? MAIN_W : CW,
+                  height: ROW_H,
+                  backgroundColor: C.gray,
+                  marginRight: secImg1 ? IMG_GAP : 0,
+                }}
+              >
+                <Image
+                  src={imagenPortada}
+                  style={{ width: secImg1 ? MAIN_W : CW, height: ROW_H, objectFit: "contain" }}
+                />
               </View>
             )}
             {secImg1 && (
-              <View style={s.imagesSecCol}>
-                <Image
-                  src={secImg1}
-                  style={[s.imageSec, secImg2 ? s.imageSecGap : {}]}
-                />
-                {secImg2 && <Image src={secImg2} style={s.imageSec} />}
+              <View style={{ flexDirection: "column" }}>
+                <View
+                  style={{
+                    width: SEC_W,
+                    height: SEC_H,
+                    backgroundColor: C.gray,
+                    marginBottom: secImg2 ? SEC_GAP : 0,
+                  }}
+                >
+                  <Image src={secImg1} style={{ width: SEC_W, height: SEC_H, objectFit: "contain" }} />
+                </View>
+                {secImg2 && (
+                  <View style={{ width: SEC_W, height: SEC_H, backgroundColor: C.gray }}>
+                    <Image src={secImg2} style={{ width: SEC_W, height: SEC_H, objectFit: "contain" }} />
+                  </View>
+                )}
               </View>
             )}
           </View>
         )}
 
         {/* MAP */}
-        {mapDataUrl && <Image src={mapDataUrl} style={s.mapImage} />}
+        {mapDataUrl && (
+          <Image
+            src={mapDataUrl}
+            style={{ width: CW, height: 72, objectFit: "cover", marginBottom: 8 }}
+          />
+        )}
 
         {/* SPECS */}
         {specs.length > 0 && (
@@ -323,30 +351,65 @@ export default function FichaTecnicaDoc({
           </View>
         )}
 
-        {/* FOOTER */}
-        <View style={s.footer}>
-          <View style={s.qrBlock}>
-            <Image src={qrDataUrl} style={s.qrImage} />
-            <Text style={s.qrLabel}>Escanea para ver en línea</Text>
+        {/* Reserve bottom space so content never overlaps the absolute footer */}
+        {incluirContacto && <View style={{ height: FOOTER_H }} />}
+
+        {/* FOOTER — absolutely positioned at page bottom; never flows to a new page */}
+        {incluirContacto && (
+          <View
+            style={{
+              position: "absolute",
+              bottom: 28,
+              left: 36,
+              right: 36,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "flex-end",
+              paddingTop: 6,
+              borderTopWidth: 1,
+              borderTopColor: C.border,
+            }}
+          >
+            <View style={{ alignItems: "center" }}>
+              <Image src={qrDataUrl} style={{ width: 56, height: 56, marginBottom: 3 }} />
+              <Text style={{ fontSize: 6.5, color: C.grayMid, textAlign: "center" }}>
+                Escanea para ver en línea
+              </Text>
+            </View>
+            <Text style={{ fontSize: 7, color: C.grayMid, textAlign: "right" }}>
+              www.blav.com.mx
+            </Text>
           </View>
-          <Text style={s.footerSite}>www.blav.com.mx</Text>
-        </View>
+        )}
       </Page>
 
-      {/* ── GALLERY PAGES ────────────────────────────────────────── */}
-      {galleryImages.length > 0 && (
+      {/* ── GALLERY PAGE ─────────────────────────────────────────────── */}
+      {galleryRows.length > 0 && (
         <Page size="A4" style={s.page}>
           <View style={s.accentBar} />
           <Text style={s.galleryTitle}>Galería de imágenes</Text>
-          <View style={s.galleryGrid}>
-            {galleryImages.map((url, i) => (
-              <Image
-                key={i}
-                src={url}
-                style={[s.galleryImage, i % 2 === 0 ? s.galleryImageLeft : {}]}
-              />
-            ))}
-          </View>
+          {galleryRows.map(([left, right], rowIdx) => (
+            <View
+              key={rowIdx}
+              style={{ flexDirection: "row", marginBottom: GAL_GAP }}
+            >
+              <View
+                style={{
+                  width: GAL_W,
+                  height: GAL_H,
+                  backgroundColor: C.gray,
+                  marginRight: right ? GAL_GAP : 0,
+                }}
+              >
+                <Image src={left} style={{ width: GAL_W, height: GAL_H, objectFit: "contain" }} />
+              </View>
+              {right && (
+                <View style={{ width: GAL_W, height: GAL_H, backgroundColor: C.gray }}>
+                  <Image src={right} style={{ width: GAL_W, height: GAL_H, objectFit: "contain" }} />
+                </View>
+              )}
+            </View>
+          ))}
         </Page>
       )}
     </Document>

@@ -16,8 +16,8 @@ export default function FichaTecnicaButton({ tipo, slug }: Props) {
     setLoading(true);
     setError(null);
     try {
-      const url = `/api/ficha-tecnica/${tipo}/${slug}?contacto=${incluirContacto}`;
-      const res = await fetch(url);
+      const url = `/api/ficha-tecnica/${tipo}/${slug}?contacto=${incluirContacto}&_t=${Date.now()}`;
+      const res = await fetch(url, { cache: "no-store" });
       if (!res.ok) throw new Error("No se pudo generar el PDF");
       const blob = await res.blob();
       const blobUrl = URL.createObjectURL(blob);

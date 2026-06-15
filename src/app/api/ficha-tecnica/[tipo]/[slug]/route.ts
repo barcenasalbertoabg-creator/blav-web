@@ -17,6 +17,9 @@ import type { Project } from "@/types/project";
 import type { PortableTextBlock } from "@/types/project";
 import { TIPO_LABEL } from "@/types/propiedad";
 
+// Prevent Next.js from caching this route — the ?contacto param must always be read fresh
+export const dynamic = "force-dynamic";
+
 type Params = { tipo: string; slug: string };
 
 const OPERACION_MAP: Record<OperacionPropiedad, string> = {
@@ -24,6 +27,27 @@ const OPERACION_MAP: Record<OperacionPropiedad, string> = {
   renta: "EN RENTA",
   preventa: "EN PREVENTA",
 };
+
+// ── PDF layout constants (must stay in sync with FichaTecnicaDoc.tsx) ────────
+const _CW   = 595 - 36 - 36;                          // 523 pt usable width
+const _ROW_H = 158;
+const _MAIN_W = Math.round((_CW - 5) * (2 / 3));      // 345 pt
+const _SEC_W  = _CW - _MAIN_W - 5;                    // 173 pt
+const _SEC_H  = Math.floor((_ROW_H - 5) / 2);         // 76 pt
+const _GAL_W  = Math.floor((_CW - 6) / 2);            // 258 pt
+const _GAL_H  = 155;
+
+/**
+ * Request a Sanity CDN image optimized by width only (no crop).
+ * Preserves full aspect ratio so objectFit:"contain" in the PDF shows the complete image.
+ * Images are requested at 2× PDF points for sharp rendering.
+ */
+function sanityImg(url: string, wPt: number, _hPt: number, q = 65): string {
+  if (!url || !url.includes("cdn.sanity.io")) return url;
+  const sep = url.includes("?") ? "&" : "?";
+  const w = Math.round(wPt * 2);
+  return `${url}${sep}w=${w}&fm=jpg&q=${q}`;
+}
 
 function imgToBase64(filename: string): string {
   const filePath = path.join(process.cwd(), "public", "images", filename);
@@ -51,12 +75,6 @@ async function fetchMapImage(lat: number, lng: number): Promise<string | null> {
   }
 }
 
-function optimizeImg(url: string, w = 800, q = 65): string {
-  if (!url || !url.includes("cdn.sanity.io")) return url;
-  const sep = url.includes("?") ? "&" : "?";
-  return `${url}${sep}w=${w}&fm=jpg&q=${q}`;
-}
-
 function resolveCoords(
   coordenadas?: { lat: number; lng: number } | null,
   mapsUrl?: string | null
@@ -68,7 +86,10 @@ function resolveCoords(
 
 export async function GET(req: NextRequest, { params }: { params: Params }) {
   const { tipo, slug } = params;
-  const incluirContacto = req.nextUrl.searchParams.get("contacto") !== "false";
+  const contactoParam = req.nextUrl.searchParams.get("contacto");
+  const incluirContacto = contactoParam !== "false";
+
+  console.log(`[ficha-tecnica] tipo=${tipo} slug=${slug} contacto_param="${contactoParam}" incluirContacto=${incluirContacto}`);
 
   if (tipo !== "propiedad" && tipo !== "proyecto") {
     return new NextResponse("Tipo inválido", { status: 400 });
@@ -128,6 +149,13 @@ export async function GET(req: NextRequest, { params }: { params: Params }) {
         ? formatPrecio(p.mantenimiento, "MXN") + " /mes"
         : null;
 
+    const descRaw = portableTextToPlain(p.descripcion_larga as PortableTextBlock[] | string | null);
+    const descripcion = descRaw.length > 380 ? descRaw.slice(0, 380).trimEnd() + "…" : descRaw;
+
+    // Pre-crop images to exact PDF container dimensions using Sanity CDN
+    const rawImages = (p.imagenes ?? []).slice(0, 20);
+    const hasSecImg = rawImages.length > 0;
+
     docProps = {
       titulo: p.titulo,
       subtitulo: `${TIPO_LABEL[p.tipo].toUpperCase()} ${OPERACION_MAP[p.operacion] ?? p.operacion.toUpperCase()}`,
@@ -135,12 +163,14 @@ export async function GET(req: NextRequest, { params }: { params: Params }) {
       precio: p.mostrar_precio && p.precio ? formatPrecio(p.precio, p.moneda) : null,
       notaPrecio: p.nota_precio,
       mostrarPrecio: p.mostrar_precio,
-      imagenPortada: optimizeImg(p.imagen_portada, 1100, 70),
-      imagenes: (p.imagenes ?? []).slice(0, 10).map((u) => optimizeImg(u, 700)),
+      imagenPortada: sanityImg(p.imagen_portada, hasSecImg ? _MAIN_W : _CW, _ROW_H, 70),
+      imagenes: rawImages.map((u, i) =>
+        i < 2 ? sanityImg(u, _SEC_W, _SEC_H) : sanityImg(u, _GAL_W, _GAL_H)
+      ),
       specs,
       mantenimiento: mantStr,
       folio: generarFolio(slug),
-      descripcion: portableTextToPlain(p.descripcion_larga as PortableTextBlock[] | string | null),
+      descripcion,
       amenidades: p.amenidades ?? null,
       qrDataUrl,
       mapDataUrl,
@@ -153,6 +183,12 @@ export async function GET(req: NextRequest, { params }: { params: Params }) {
 
     const specs = (proj.caracteristicas ?? []).map(({ label, valor }) => ({ label, valor }));
 
+    const descRaw = portableTextToPlain(proj.descripcion_larga as PortableTextBlock[] | string | null);
+    const descripcion = descRaw.length > 380 ? descRaw.slice(0, 380).trimEnd() + "…" : descRaw;
+
+    const rawImages = (proj.imagenes ?? []).slice(0, 20);
+    const hasSecImg = rawImages.length > 0;
+
     docProps = {
       titulo: proj.nombre,
       subtitulo: `PROYECTO ${(proj.categoria ?? "").toUpperCase()}`,
@@ -160,12 +196,14 @@ export async function GET(req: NextRequest, { params }: { params: Params }) {
       precio: proj.precio_desde ? formatPrecio(proj.precio_desde, proj.moneda) : null,
       notaPrecio: proj.nota_precio,
       mostrarPrecio: !!proj.precio_desde,
-      imagenPortada: optimizeImg(proj.imagen_portada, 1100, 70),
-      imagenes: (proj.imagenes ?? []).slice(0, 10).map((u) => optimizeImg(u, 700)),
+      imagenPortada: sanityImg(proj.imagen_portada, hasSecImg ? _MAIN_W : _CW, _ROW_H, 70),
+      imagenes: rawImages.map((u, i) =>
+        i < 2 ? sanityImg(u, _SEC_W, _SEC_H) : sanityImg(u, _GAL_W, _GAL_H)
+      ),
       specs,
       mantenimiento: null,
       folio: generarFolio(slug),
-      descripcion: portableTextToPlain(proj.descripcion_larga as PortableTextBlock[] | string | null),
+      descripcion,
       amenidades: proj.amenidades ?? null,
       qrDataUrl,
       mapDataUrl,
@@ -183,6 +221,7 @@ export async function GET(req: NextRequest, { params }: { params: Params }) {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="ficha-tecnica-${slug}.pdf"`,
+        "Cache-Control": "no-store",
       },
     });
   } catch (err) {
