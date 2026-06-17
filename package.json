@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "migrate": "node scripts/migrate-to-sanity.mjs"
+    "migrate": "node scripts/migrate-to-sanity.mjs",
+    "crear-articulo": "node scripts/crear-articulo-poliza.mjs"
   },
   "dependencies": {
     "@portabletext/react": "^6.0.3",

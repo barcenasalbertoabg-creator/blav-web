@@ -37,6 +37,7 @@ export const articuloType = defineType({
           { title: "Inversión", value: "inversion" },
           { title: "Mercado",   value: "mercado" },
           { title: "Consejos",  value: "consejos" },
+          { title: "Legal",     value: "legal" },
         ],
         layout: "radio",
       },
@@ -124,7 +125,7 @@ export const articuloType = defineType({
     prepare({ title, subtitle, media }) {
       const cats: Record<string, string> = {
         compra: "Compra", renta: "Renta", inversion: "Inversión",
-        mercado: "Mercado", consejos: "Consejos",
+        mercado: "Mercado", consejos: "Consejos", legal: "Legal",
       };
       return { title: title ?? "Sin título", subtitle: cats[subtitle] ?? subtitle ?? "", media };
     },

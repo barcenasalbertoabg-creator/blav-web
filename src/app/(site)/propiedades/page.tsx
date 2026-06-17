@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { getAllPropiedades } from "@/lib/propiedades";
 import PropiedadesClient from "./PropiedadesClient";
 
@@ -52,7 +53,9 @@ export default async function PropiedadesPage() {
               </a>
             </div>
           ) : (
-            <PropiedadesClient propiedades={propiedades} tipos={tipos} />
+            <Suspense>
+              <PropiedadesClient propiedades={propiedades} tipos={tipos} />
+            </Suspense>
           )}
         </div>
       </section>

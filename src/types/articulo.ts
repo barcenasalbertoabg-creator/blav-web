@@ -1,6 +1,6 @@
 import type { PortableTextBlock } from "./project";
 
-export type CategoriaArticulo = "compra" | "renta" | "inversion" | "mercado" | "consejos";
+export type CategoriaArticulo = "compra" | "renta" | "inversion" | "mercado" | "consejos" | "legal";
 
 export const CATEGORIA_LABEL: Record<CategoriaArticulo, string> = {
   compra:    "Compra",
@@ -8,6 +8,7 @@ export const CATEGORIA_LABEL: Record<CategoriaArticulo, string> = {
   inversion: "Inversión",
   mercado:   "Mercado",
   consejos:  "Consejos",
+  legal:     "Legal",
 };
 
 export interface Articulo {

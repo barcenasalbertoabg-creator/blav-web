@@ -1,0 +1,78 @@
+{
+  "_id": "articulo-poliza-juridica-arrendamiento-queretaro",
+  "_type": "articulo",
+  "titulo": "Qué es la póliza jurídica de arrendamiento y por qué te conviene tenerla",
+  "slug": {
+    "_type": "slug",
+    "current": "poliza-juridica-arrendamiento-queretaro"
+  },
+  "categoria": "legal",
+  "descripcionCorta": "La póliza jurídica de arrendamiento se menciona mucho pero pocas veces se explica bien. Aquí te decimos qué cubre realmente, qué exige y por qué le da tranquilidad tanto al propietario como al inquilino.",
+  "fecha": "2026-06-16",
+  "tiempoLectura": 5,
+  "contenido": [
+    {
+      "_type": "block",
+      "_key": "blk1",
+      "style": "normal",
+      "markDefs": [],
+      "children": [{ "_type": "span", "_key": "s1", "text": "Si has rentado o estás por rentar una propiedad en Querétaro, es probable que hayas escuchado el término \"póliza jurídica\" sin que nadie te explique bien qué hace en realidad. Aquí te lo explicamos sin vueltas.", "marks": [] }]
+    },
+    {
+      "_type": "block",
+      "_key": "blk2",
+      "style": "normal",
+      "markDefs": [],
+      "children": [{ "_type": "span", "_key": "s2", "text": "Una póliza jurídica de arrendamiento es un servicio legal que contratas con un despacho especializado para que, si el inquilino incumple el contrato —principalmente por falta de pago—, un equipo de abogados intervenga directamente para resolverlo. No es un seguro en el sentido tradicional ni elimina el riesgo por completo: es respaldo legal especializado actuando desde el momento en que algo se sale del contrato.", "marks": [] }]
+    },
+    {
+      "_type": "block",
+      "_key": "blk3",
+      "style": "normal",
+      "markDefs": [],
+      "children": [{ "_type": "span", "_key": "s3", "text": "¿Por qué importa? Porque en México, recuperar una propiedad de un inquilino que dejó de pagar puede ser un proceso largo y desgastante si lo enfrentas solo, sin asesoría jurídica constante. La póliza no evita que existan conflictos, pero sí evita que tengas que resolverlos tú mismo mientras el tiempo —y la renta no pagada— sigue corriendo.", "marks": [] }]
+    },
+    {
+      "_type": "block",
+      "_key": "blk4",
+      "style": "normal",
+      "markDefs": [],
+      "children": [{ "_type": "span", "_key": "s4", "text": "En BLAV trabajamos directamente con Peñaloza Consultoría Integral, despacho con más de 40 años de trayectoria en derecho inmobiliario e hipotecario en Querétaro. Así es como funciona en la práctica:", "marks": [] }]
+    },
+    {
+      "_type": "block",
+      "_key": "blk5",
+      "style": "normal",
+      "markDefs": [],
+      "children": [{ "_type": "span", "_key": "s5", "text": "La póliza cubre que el contrato de arrendamiento se cumpla a cabalidad. Si el inquilino deja de pagar, el despacho interviene legalmente para gestionar las rentas adeudadas y resolver el incumplimiento. No hay un número fijo de meses \"cubiertos\": el respaldo legal acompaña el proceso hasta resolverlo.", "marks": [] }]
+    },
+    {
+      "_type": "block",
+      "_key": "blk6",
+      "style": "normal",
+      "markDefs": [],
+      "children": [{ "_type": "span", "_key": "s6", "text": "Sí exige un obligado solidario con comprobantes de ingresos. Esto hay que decirlo de frente: esta póliza no es de las que se anuncian como \"sin aval\". Si no tienes quién pueda respaldarte de esta forma, es algo que hay que resolver antes de avanzar con la renta.", "marks": [] }]
+    },
+    {
+      "_type": "block",
+      "_key": "blk7",
+      "style": "normal",
+      "markDefs": [],
+      "children": [{ "_type": "span", "_key": "s7", "text": "Normalmente la paga el inquilino, aunque en algunos casos se puede dividir el costo con el propietario si ambas partes están de acuerdo.", "marks": [] }]
+    },
+    {
+      "_type": "block",
+      "_key": "blk8",
+      "style": "normal",
+      "markDefs": [],
+      "children": [{ "_type": "span", "_key": "s8", "text": "¿El beneficio real? Para el propietario, tranquilidad de que su patrimonio no depende solo de la buena voluntad del inquilino. Para el inquilino con buen perfil, formalizar la renta con este respaldo suele agilizar la aprobación, porque le da al propietario una garantía adicional más allá de la confianza personal.", "marks": [] }]
+    },
+    {
+      "_type": "block",
+      "_key": "blk9",
+      "style": "normal",
+      "markDefs": [],
+      "children": [{ "_type": "span", "_key": "s9", "text": "Si estás rentando o poniendo en renta una propiedad en Querétaro y quieres saber si esta póliza aplica a tu caso, en BLAV te explicamos el proceso completo antes de firmar nada.", "marks": [] }]
+    }
+  ]
+}
