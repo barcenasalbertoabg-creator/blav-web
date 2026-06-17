@@ -1,52 +1,61 @@
-import { client } from "@/../../sanity/lib/client";
-import {
-  ALL_ARTICULOS_QUERY,
-  ARTICULO_BY_SLUG_QUERY,
-  ALL_ARTICULO_SLUGS_QUERY,
-} from "@/../../sanity/lib/queries";
-import { resolveImageUrl } from "@/../../sanity/lib/image";
-import { projectId } from "@/../../sanity/env";
-import type { Articulo, CategoriaArticulo } from "@/types/articulo";
+/**
+ * Migra los 7 artículos estáticos de src/lib/articulos.ts a Sanity.
+ * Uso: node scripts/migrar-articulos-estaticos.mjs
+ * Requiere SANITY_API_TOKEN en .env.local
+ */
 
-type SanityImageRaw = { urlExterna?: string | null; asset?: { url?: string; _id?: string } | null };
-type SanityArticuloRaw = Omit<Articulo, "imagen_portada" | "seo"> & {
-  imagenPortadaRaw: SanityImageRaw;
-  seo: Omit<Articulo["seo"], "og_imagen"> & { ogImagenRaw: SanityImageRaw };
-};
+import { createClient } from "@sanity/client";
+import { readFileSync } from "fs";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
 
-function normalizeArticulo(raw: SanityArticuloRaw): Articulo {
-  return {
-    ...raw,
-    imagen_portada: resolveImageUrl(raw.imagenPortadaRaw),
-    seo: {
-      titulo:      raw.seo?.titulo      || raw.titulo,
-      descripcion: raw.seo?.descripcion || raw.descripcion_corta,
-      og_imagen:   resolveImageUrl(raw.seo?.ogImagenRaw) || resolveImageUrl(raw.imagenPortadaRaw),
-    },
-  };
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const ROOT = join(__dirname, "..");
+
+function loadEnv() {
+  const raw = readFileSync(join(ROOT, ".env.local"), "utf-8");
+  raw.split("\n").forEach((line) => {
+    const [key, ...rest] = line.split("=");
+    if (key && !key.startsWith("#") && rest.length > 0)
+      process.env[key.trim()] = rest.join("=").trim();
+  });
+}
+loadEnv();
+
+const client = createClient({
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+  dataset:   process.env.NEXT_PUBLIC_SANITY_DATASET ?? "production",
+  token:     process.env.SANITY_API_TOKEN,
+  apiVersion: "2024-01-01",
+  useCdn: false,
+});
+
+function uid() {
+  return Math.random().toString(36).slice(2, 9);
 }
 
-function isSanityConfigured(): boolean {
-  return !!projectId;
+function textToBlocks(text) {
+  return text.split("\n\n").filter(Boolean).map((para) => ({
+    _type: "block",
+    _key: uid(),
+    style: "normal",
+    markDefs: [],
+    children: [{ _type: "span", _key: uid(), text: para.trim(), marks: [] }],
+  }));
 }
 
-const ARTICULOS_ESTATICOS_LEGACY: Articulo[] = [
+const articulos = [
   {
     slug: "como-elegir-zona-para-vivir-en-queretaro",
     titulo: "Cómo elegir una zona para vivir en Querétaro",
-    categoria: "consejos" as CategoriaArticulo,
-    descripcion_corta:
-      "Querétaro tiene zonas muy distintas entre sí. Esta guía te ayuda a entender cuál se ajusta mejor a tu estilo de vida, presupuesto y necesidades cotidianas.",
-    imagen_portada:
-      "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80",
+    categoria: "consejos",
+    descripcionCorta: "Querétaro tiene zonas muy distintas entre sí. Esta guía te ayuda a entender cuál se ajusta mejor a tu estilo de vida, presupuesto y necesidades cotidianas.",
+    imagenUrlExterna: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80",
+    ogImagenUrl: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1200&q=80",
     fecha: "2026-01-15",
-    tiempo_lectura: 5,
-    seo: {
-      titulo: "Cómo elegir una zona para vivir en Querétaro — BLAV",
-      descripcion:
-        "Guía práctica para entender Juriquilla, El Marqués, Sonterra, Centro y más. Elige la zona correcta según tu presupuesto y estilo de vida.",
-      og_imagen: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1200&q=80",
-    },
+    tiempoLectura: 5,
+    seoTitulo: "Cómo elegir una zona para vivir en Querétaro — BLAV",
+    seoDescripcion: "Guía práctica para entender Juriquilla, El Marqués, Sonterra, Centro y más. Elige la zona correcta según tu presupuesto y estilo de vida.",
     contenido: `Querétaro es hoy una de las ciudades con mayor calidad de vida y crecimiento económico en México. Eso tiene un precio: la oferta inmobiliaria es amplia pero también variada, y elegir la zona correcta puede marcar una gran diferencia en tu día a día.
 
 Antes de buscar propiedades, vale la pena hacerse algunas preguntas: ¿cuánto tiempo estás dispuesto a invertir en traslados? ¿Qué tan importante es estar cerca de escuelas o parques? ¿Prefieres un ambiente más urbano o más tranquilo? ¿Cuál es tu presupuesto mensual o de compra?
@@ -68,19 +77,14 @@ No existe una zona perfecta para todos. La clave es alinear la decisión con tu 
   {
     slug: "que-revisar-antes-de-rentar-una-propiedad",
     titulo: "Qué revisar antes de rentar una propiedad",
-    categoria: "renta" as CategoriaArticulo,
-    descripcion_corta:
-      "Rentar parece sencillo, pero hay detalles clave que muchos inquilinos no revisan y que después se convierten en problemas. Aquí te decimos qué no puedes pasar por alto.",
-    imagen_portada:
-      "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80",
+    categoria: "renta",
+    descripcionCorta: "Rentar parece sencillo, pero hay detalles clave que muchos inquilinos no revisan y que después se convierten en problemas. Aquí te decimos qué no puedes pasar por alto.",
+    imagenUrlExterna: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80",
+    ogImagenUrl: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80",
     fecha: "2026-02-10",
-    tiempo_lectura: 4,
-    seo: {
-      titulo: "Qué revisar antes de rentar una propiedad — BLAV",
-      descripcion:
-        "Documentos, contrato, depósito, inventario y estado físico. Todo lo que debes revisar antes de firmar un contrato de arrendamiento.",
-      og_imagen: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80",
-    },
+    tiempoLectura: 4,
+    seoTitulo: "Qué revisar antes de rentar una propiedad — BLAV",
+    seoDescripcion: "Documentos, contrato, depósito, inventario y estado físico. Todo lo que debes revisar antes de firmar un contrato de arrendamiento.",
     contenido: `La renta de una propiedad implica más que gustarte el espacio y negociar el precio. Antes de firmar cualquier contrato, hay una serie de elementos que deberías revisar con calma. Detectar un problema antes de rentar te puede ahorrar meses de complicaciones.
 
 La documentación del inmueble es el primer punto. Solicita el predial reciente del dueño para confirmar que está pagado. Si hay adeudos de agua o de mantenimiento en condominio, asegúrate de que estén liquidados antes de que firmes. También es recomendable que el propietario te muestre que el inmueble no tiene juicios activos o hipotecas que pongan en riesgo la ocupación.
@@ -100,19 +104,14 @@ Con una revisión cuidadosa antes de firmar, la mayoría de los problemas comune
   {
     slug: "como-evaluar-una-propiedad-de-inversion",
     titulo: "Cómo evaluar una propiedad de inversión",
-    categoria: "inversion" as CategoriaArticulo,
-    descripcion_corta:
-      "No todas las propiedades son buenas inversiones. Estos indicadores clave te ayudan a decidir si el negocio tiene sentido en números y en contexto de mercado.",
-    imagen_portada:
-      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80",
+    categoria: "inversion",
+    descripcionCorta: "No todas las propiedades son buenas inversiones. Estos indicadores clave te ayudan a decidir si el negocio tiene sentido en números y en contexto de mercado.",
+    imagenUrlExterna: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80",
+    ogImagenUrl: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=80",
     fecha: "2026-03-05",
-    tiempo_lectura: 6,
-    seo: {
-      titulo: "Cómo evaluar una propiedad de inversión — BLAV",
-      descripcion:
-        "Cap rate, plusvalía, flujo de caja y aspectos legales. Todo lo que necesitas analizar antes de comprar una propiedad como inversión.",
-      og_imagen: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=80",
-    },
+    tiempoLectura: 6,
+    seoTitulo: "Cómo evaluar una propiedad de inversión — BLAV",
+    seoDescripcion: "Cap rate, plusvalía, flujo de caja y aspectos legales. Todo lo que necesitas analizar antes de comprar una propiedad como inversión.",
     contenido: `Invertir en bienes raíces sigue siendo una de las formas más sólidas de preservar y hacer crecer el capital en México. Pero no toda propiedad es automáticamente una buena inversión. Antes de decidir, es indispensable analizar varios factores con frialdad, más allá de si el inmueble te gusta estéticamente.
 
 El primero y más importante es la ubicación. En bienes raíces, la plusvalía —el incremento de valor en el tiempo— está directamente ligada a la zona. Áreas con crecimiento de infraestructura, nuevos desarrollos comerciales o mejoras en conectividad tienden a subir de valor. En Querétaro, zonas como el Libramiento Norponiente, El Marqués y Juriquilla han mostrado tasas de crecimiento sostenidas en los últimos años.
@@ -134,19 +133,14 @@ En BLAV analizamos contigo cada oportunidad con información real de mercado. No
   {
     slug: "zonas-mayor-plusvalia-queretaro-2025",
     titulo: "Las zonas con mayor plusvalía en Querétaro 2025",
-    categoria: "inversion" as CategoriaArticulo,
-    descripcion_corta:
-      "Querétaro sigue siendo una de las ciudades con mayor crecimiento de valor en México. Estas son las zonas que lideran la plusvalía en 2025 y por qué conviene tenerlas en el radar.",
-    imagen_portada:
-      "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80",
+    categoria: "inversion",
+    descripcionCorta: "Querétaro sigue siendo una de las ciudades con mayor crecimiento de valor en México. Estas son las zonas que lideran la plusvalía en 2025 y por qué conviene tenerlas en el radar.",
+    imagenUrlExterna: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80",
+    ogImagenUrl: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1200&q=80",
     fecha: "2025-03-10",
-    tiempo_lectura: 6,
-    seo: {
-      titulo: "Zonas con mayor plusvalía en Querétaro 2025 — BLAV",
-      descripcion:
-        "Libramiento Norponiente, El Marqués, Juriquilla y más. Análisis de las zonas con mayor crecimiento de valor inmobiliario en Querétaro durante 2025.",
-      og_imagen: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1200&q=80",
-    },
+    tiempoLectura: 6,
+    seoTitulo: "Zonas con mayor plusvalía en Querétaro 2025 — BLAV",
+    seoDescripcion: "Libramiento Norponiente, El Marqués, Juriquilla y más. Análisis de las zonas con mayor crecimiento de valor inmobiliario en Querétaro durante 2025.",
     contenido: `Querétaro lleva más de una década siendo una de las ciudades con mayor dinamismo económico e inmobiliario de México. En 2025, ese crecimiento no se ha detenido, pero sí se ha concentrado en zonas específicas que ofrecen oportunidades claras para quienes buscan invertir con visión de largo plazo.
 
 El Libramiento Norponiente es, sin duda, la zona de mayor atención este año. Este corredor vial que conecta la parte norte y poniente de la ciudad se ha convertido en el eje de los desarrollos residenciales de mayor plusvalía en Querétaro. La infraestructura vial de primer nivel, la proximidad a aeropuerto internacional y la llegada de proyectos residenciales de lujo —con campos de golf, amenidades exclusivas y accesos controlados— han generado una apreciación sostenida del suelo que supera el 15% anual en algunas zonas puntuales. Quien compró terreno o preventa en este corredor hace tres años hoy tiene una plusvalía significativa.
@@ -164,19 +158,14 @@ La zona norte de la ciudad, vinculada al corredor industrial del aeropuerto, tam
   {
     slug: "guia-rentar-local-comercial-queretaro",
     titulo: "Guía para rentar un local comercial en Querétaro",
-    categoria: "renta" as CategoriaArticulo,
-    descripcion_corta:
-      "Rentar un local comercial en Querétaro implica más que encontrar el espacio adecuado. Esta guía cubre todo lo que necesitas saber antes de firmar un contrato.",
-    imagen_portada:
-      "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80",
+    categoria: "renta",
+    descripcionCorta: "Rentar un local comercial en Querétaro implica más que encontrar el espacio adecuado. Esta guía cubre todo lo que necesitas saber antes de firmar un contrato.",
+    imagenUrlExterna: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80",
+    ogImagenUrl: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80",
     fecha: "2025-02-18",
-    tiempo_lectura: 5,
-    seo: {
-      titulo: "Guía para rentar un local comercial en Querétaro — BLAV",
-      descripcion:
-        "Contrato, fianza, aforo, zonificación y más. Todo lo que debes revisar antes de rentar un local comercial en Querétaro para tu negocio.",
-      og_imagen: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80",
-    },
+    tiempoLectura: 5,
+    seoTitulo: "Guía para rentar un local comercial en Querétaro — BLAV",
+    seoDescripcion: "Contrato, fianza, aforo, zonificación y más. Todo lo que debes revisar antes de rentar un local comercial en Querétaro para tu negocio.",
     contenido: `Abrir un negocio propio es una de las decisiones más importantes que puede tomar una persona. Y dentro de esa decisión, elegir el local comercial correcto puede ser la diferencia entre el éxito y el cierre en el primer año. En Querétaro, el mercado de locales comerciales es dinámico y competitivo. Aquí te explicamos qué debes tener en cuenta antes de firmar cualquier contrato.
 
 Lo primero que debes definir es el uso de suelo. No todos los inmuebles en Querétaro están autorizados para todos los giros comerciales. Un local que visualmente parece perfecto para un restaurante puede no tener la licencia de uso de suelo correspondiente, lo que implicaría meses de trámites y gastos adicionales antes de poder operar. Antes de avanzar con cualquier negociación, solicita al propietario o al municipio la constancia de uso de suelo y verifica que el giro que planeas sea compatible.
@@ -196,19 +185,14 @@ En BLAV trabajamos con propietarios de locales comerciales en múltiples zonas d
   {
     slug: "conviene-mas-comprar-o-rentar-queretaro",
     titulo: "¿Conviene más comprar o rentar en Querétaro?",
-    categoria: "consejos" as CategoriaArticulo,
-    descripcion_corta:
-      "La respuesta depende de tu momento de vida, tus finanzas y tus planes a futuro. Aquí analizamos los factores reales para tomar la mejor decisión en el mercado queretano.",
-    imagen_portada:
-      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80",
+    categoria: "consejos",
+    descripcionCorta: "La respuesta depende de tu momento de vida, tus finanzas y tus planes a futuro. Aquí analizamos los factores reales para tomar la mejor decisión en el mercado queretano.",
+    imagenUrlExterna: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80",
+    ogImagenUrl: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=80",
     fecha: "2025-01-22",
-    tiempo_lectura: 5,
-    seo: {
-      titulo: "¿Conviene más comprar o rentar en Querétaro? — BLAV",
-      descripcion:
-        "Análisis honesto de cuándo conviene comprar y cuándo rentar en Querétaro, considerando plusvalía, tasas hipotecarias, movilidad y etapa de vida.",
-      og_imagen: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=80",
-    },
+    tiempoLectura: 5,
+    seoTitulo: "¿Conviene más comprar o rentar en Querétaro? — BLAV",
+    seoDescripcion: "Análisis honesto de cuándo conviene comprar y cuándo rentar en Querétaro, considerando plusvalía, tasas hipotecarias, movilidad y etapa de vida.",
     contenido: `Es una de las preguntas más frecuentes que recibimos en BLAV, y también una de las más difíciles de responder de forma genérica, porque la respuesta correcta depende de factores muy personales. Dicho eso, hay elementos objetivos que ayudan a orientar la decisión.
 
 Primero, lo que no es correcto: decir que rentar es "tirar el dinero". Esta frase ignora que cuando compras con crédito hipotecario, una parte significativa de tus primeros años de pagos se va a intereses, no a construir patrimonio real. También ignora los costos de mantenimiento, predial, seguros y los gastos de adquisición que implica comprar. Rentar tiene un costo, sí, pero también tiene valor: flexibilidad, previsibilidad de gasto mensual y cero responsabilidad sobre el mantenimiento del inmueble.
@@ -228,19 +212,14 @@ En BLAV no tenemos un interés en que compres o rentes: tenemos interés en que 
   {
     slug: "libramiento-norponiente-queretaro-inversion",
     titulo: "Qué es el Libramiento Norponiente y por qué importa para invertir",
-    categoria: "inversion" as CategoriaArticulo,
-    descripcion_corta:
-      "El Libramiento Norponiente es el desarrollo vial más importante de Querétaro en la última década. Entender por qué transforma el mercado inmobiliario es clave para invertir bien.",
-    imagen_portada:
-      "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80",
+    categoria: "inversion",
+    descripcionCorta: "El Libramiento Norponiente es el desarrollo vial más importante de Querétaro en la última década. Entender por qué transforma el mercado inmobiliario es clave para invertir bien.",
+    imagenUrlExterna: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80",
+    ogImagenUrl: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1200&q=80",
     fecha: "2024-12-05",
-    tiempo_lectura: 6,
-    seo: {
-      titulo: "Libramiento Norponiente de Querétaro: guía para inversión inmobiliaria — BLAV",
-      descripcion:
-        "Todo sobre el Libramiento Norponiente de Querétaro: qué es, qué zonas conecta, qué proyectos inmobiliarios hay y por qué es la zona de mayor plusvalía en la ciudad.",
-      og_imagen: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1200&q=80",
-    },
+    tiempoLectura: 6,
+    seoTitulo: "Libramiento Norponiente de Querétaro: guía para inversión inmobiliaria — BLAV",
+    seoDescripcion: "Todo sobre el Libramiento Norponiente de Querétaro: qué es, qué zonas conecta, qué proyectos inmobiliarios hay y por qué es la zona de mayor plusvalía en la ciudad.",
     contenido: `Si llevas tiempo siguiendo el mercado inmobiliario de Querétaro, habrás escuchado hablar del Libramiento Norponiente. Si apenas estás empezando a explorar oportunidades de inversión en la ciudad, este es probablemente el concepto más importante que debes entender.
 
 El Libramiento Norponiente es una vialidad de primer nivel que conecta la zona norte y la zona poniente de Querétaro, bordeando la ciudad por su parte más nueva y de mayor crecimiento. Su trazo va desde las inmediaciones del aeropuerto internacional hacia la Carretera a Celaya, pasando por zonas que hasta hace poco eran prácticamente rurales y que hoy se han transformado en los desarrollos residenciales más cotizados de la región.
@@ -259,33 +238,39 @@ En BLAV tenemos operaciones en esta zona y conocemos los proyectos activos, sus 
   },
 ];
 
-export async function getAllArticulos(): Promise<Articulo[]> {
-  if (!isSanityConfigured()) return ARTICULOS_ESTATICOS_LEGACY;
+console.log(`\n📦 Migrando ${articulos.length} artículos a Sanity...\n`);
+
+let ok = 0;
+let fail = 0;
+
+for (const a of articulos) {
+  const doc = {
+    _id:   `articulo-${a.slug}`,
+    _type: "articulo",
+    titulo: a.titulo,
+    slug: { _type: "slug", current: a.slug },
+    categoria: a.categoria,
+    descripcionCorta: a.descripcionCorta,
+    imagenPortada: { _type: "image", urlExterna: a.imagenUrlExterna },
+    fecha: a.fecha,
+    tiempoLectura: a.tiempoLectura,
+    contenido: textToBlocks(a.contenido),
+    seo: {
+      titulo:      a.seoTitulo,
+      descripcion: a.seoDescripcion,
+      ogImagen:    { _type: "image", urlExterna: a.ogImagenUrl },
+    },
+  };
+
   try {
-    const raw: SanityArticuloRaw[] = await client.fetch(ALL_ARTICULOS_QUERY);
-    return (raw ?? []).map(normalizeArticulo);
-  } catch {
-    return ARTICULOS_ESTATICOS_LEGACY;
+    await client.createOrReplace(doc);
+    console.log(`  ✅ ${a.slug}`);
+    ok++;
+  } catch (err) {
+    console.error(`  ❌ ${a.slug}: ${err.message}`);
+    fail++;
   }
 }
 
-export async function getArticuloBySlug(slug: string): Promise<Articulo | null> {
-  if (!isSanityConfigured()) return ARTICULOS_ESTATICOS_LEGACY.find((a) => a.slug === slug) ?? null;
-  try {
-    const raw: SanityArticuloRaw | null = await client.fetch(ARTICULO_BY_SLUG_QUERY, { slug });
-    if (!raw) return null;
-    return normalizeArticulo(raw);
-  } catch {
-    return ARTICULOS_ESTATICOS_LEGACY.find((a) => a.slug === slug) ?? null;
-  }
-}
-
-export async function getArticuloSlugs(): Promise<string[]> {
-  if (!isSanityConfigured()) return ARTICULOS_ESTATICOS_LEGACY.map((a) => a.slug);
-  try {
-    const slugs: (string | null)[] = await client.fetch(ALL_ARTICULO_SLUGS_QUERY);
-    return (slugs ?? []).filter((s): s is string => !!s);
-  } catch {
-    return ARTICULOS_ESTATICOS_LEGACY.map((a) => a.slug);
-  }
-}
+console.log(`\n${ok} creados, ${fail} fallidos.`);
+if (fail > 0) process.exit(1);
