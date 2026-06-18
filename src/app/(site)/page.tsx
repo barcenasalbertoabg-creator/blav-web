@@ -10,6 +10,7 @@ import Testimonios from "@/components/home/Testimonios";
 import ZonasQueAtendemos from "@/components/home/ZonasQueAtendemos";
 import FAQ from "@/components/home/FAQ";
 import CTAFinal from "@/components/home/CTAFinal";
+import VendeTuPropiedad from "@/components/home/VendeTuPropiedad";
 
 export default function HomePage() {
   return (
@@ -22,6 +23,7 @@ export default function HomePage() {
       <PorQueBlav />
       <Testimonios />
       <ZonasQueAtendemos />
+      <VendeTuPropiedad />
       <FAQ />
       <CTAFinal />
     </>

@@ -36,3 +36,31 @@ export function leadFormWhatsAppUrl(data: LeadFormData): string {
     .join("\n");
   return buildWhatsAppUrl(lines);
 }
+
+export type Operacion = "Venta" | "Renta";
+
+export interface OwnerLeadData {
+  nombre: string;
+  telefono: string;
+  tipoInmueble: string;
+  zona: string;
+  operacion: Operacion;
+}
+
+export function ownerLeadWhatsAppUrl(data: OwnerLeadData): string {
+  const verbo = data.operacion === "Renta" ? "rentar" : "vender";
+  const lines = [
+    `Hola, quiero información sobre cómo ${verbo} mi propiedad con BLAV.`,
+    `Nombre: ${data.nombre}`,
+    `Teléfono: ${data.telefono}`,
+    `Tipo de inmueble: ${data.tipoInmueble}`,
+    `Zona/ubicación: ${data.zona}`,
+    `Operación: ${data.operacion}`,
+  ].join("\n");
+  return buildWhatsAppUrl(lines);
+}
+
+export function ownerGenericWhatsAppUrl(operacion?: Operacion): string {
+  const verbo = operacion === "Renta" ? "rentar" : operacion === "Venta" ? "vender" : "vender/rentar";
+  return buildWhatsAppUrl(`Hola, quiero información sobre cómo ${verbo} mi propiedad con BLAV.`);
+}
