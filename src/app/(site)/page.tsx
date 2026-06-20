@@ -16,6 +16,7 @@ export default function HomePage() {
   return (
     <>
       <Hero />
+      <VendeTuPropiedad />
       <QueEstasBuscando />
       <SobreBlav />
       <Segmentos />
@@ -23,7 +24,6 @@ export default function HomePage() {
       <PorQueBlav />
       <Testimonios />
       <ZonasQueAtendemos />
-      <VendeTuPropiedad />
       <FAQ />
       <CTAFinal />
     </>

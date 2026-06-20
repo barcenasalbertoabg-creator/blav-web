@@ -10,6 +10,7 @@ const links = [
   { href: "/proyectos", label: "Proyectos" },
   { href: "/propiedades", label: "Propiedades" },
   { href: "/opinion-de-valor", label: "Opinión de Valor" },
+  { href: "/vende-tu-propiedad", label: "Vende o Renta" },
   { href: "/blog", label: "Blog" },
   { href: "/nosotros", label: "Nosotros" },
   { href: "/contacto", label: "Contacto" },
