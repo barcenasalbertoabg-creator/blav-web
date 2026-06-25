@@ -1,3 +1,4 @@
+import Link from "next/link";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 
 const segmentos = [
@@ -10,6 +11,7 @@ const segmentos = [
     ),
     titulo: "Residencial",
     desc: "Casas, departamentos y desarrollos habitacionales en las mejores zonas de Querétaro y Guanajuato.",
+    href: "/propiedades?categoria=residencial",
   },
   {
     icon: (
@@ -22,6 +24,7 @@ const segmentos = [
     ),
     titulo: "Comercial",
     desc: "Locales, plazas comerciales y desarrollos de uso mixto con alto potencial de afluencia.",
+    href: "/propiedades?categoria=comercial",
   },
   {
     icon: (
@@ -32,6 +35,7 @@ const segmentos = [
     ),
     titulo: "Industrial",
     desc: "Naves industriales, parques y espacios logísticos en corredores estratégicos del Bajío.",
+    href: "/propiedades?categoria=industrial",
   },
   {
     icon: (
@@ -42,6 +46,7 @@ const segmentos = [
     ),
     titulo: "Inversión",
     desc: "Oportunidades de preventa y proyectos en desarrollo con rendimientos atractivos.",
+    href: "/proyectos",
   },
 ];
 
@@ -57,15 +62,15 @@ export default function Segmentos() {
         </AnimatedSection>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {segmentos.map(({ icon, titulo, desc }, i) => (
+          {segmentos.map(({ icon, titulo, desc, href }, i) => (
             <AnimatedSection key={titulo} delay={i * 0.1}>
-              <div className="bg-white p-8 h-full border border-white hover:border-gold/30 transition-colors duration-300">
+              <Link href={href} className="block bg-white p-8 h-full border border-white hover:border-gold transition-colors duration-300 cursor-pointer">
                 <div className="mb-6">{icon}</div>
                 <h3 className="font-display text-xl font-semibold text-blav-black mb-3">
                   {titulo}
                 </h3>
                 <p className="font-sans text-sm text-blav-grayMid leading-relaxed">{desc}</p>
-              </div>
+              </Link>
             </AnimatedSection>
           ))}
         </div>

@@ -20,12 +20,20 @@ const ESTATUS_OPTIONS = [
   { label: "Ver todas",   param: "todas",      estados: null },
 ];
 
+const CATEGORIA_TIPOS: Record<string, string[]> = {
+  residencial: ["casa", "departamento"],
+  comercial: ["local", "oficina"],
+  industrial: ["bodega"],
+};
+
 export default function PropiedadesClient({ propiedades, tipos }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const categoriaParam = searchParams.get("categoria");
   const [activeTipo, setActiveTipo] = useState("Todos");
   const [activeOp, setActiveOp] = useState("Todos");
+  const [activeCategoria] = useState<string | null>(categoriaParam);
 
   const estatusParam = searchParams.get("estatus") ?? "disponible";
   const activeEstatus = ESTATUS_OPTIONS.find((o) => o.param === estatusParam) ?? ESTATUS_OPTIONS[0];
@@ -36,7 +44,12 @@ export default function PropiedadesClient({ propiedades, tipos }: Props) {
   }
 
   const filtered = propiedades.filter((p) => {
-    const tipoOk  = activeTipo === "Todos" || p.tipo === activeTipo;
+    const tipoOk =
+      activeTipo === "Todos"
+        ? activeCategoria
+          ? (CATEGORIA_TIPOS[activeCategoria]?.includes(p.tipo) ?? true)
+          : true
+        : p.tipo === activeTipo;
     const opOk    = activeOp === "Todos" || p.operacion === activeOp;
     const estadoOk = activeEstatus.estados === null || activeEstatus.estados.includes(p.estado);
     return tipoOk && opOk && estadoOk;
