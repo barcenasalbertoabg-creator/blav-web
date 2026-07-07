@@ -49,12 +49,12 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop menu */}
-        <ul className="hidden md:flex items-center gap-8">
+        <ul className="hidden md:flex items-center gap-4 lg:gap-6">
           {links.map(({ href, label }) => (
-            <li key={href}>
+            <li key={href} className="flex-shrink-0">
               <Link
                 href={href}
-                className={`font-sans text-sm tracking-widest uppercase transition-colors duration-200 ${
+                className={`font-sans text-xs tracking-wide uppercase whitespace-nowrap transition-colors duration-200 ${
                   pathname === href
                     ? "text-gold"
                     : "text-blav-black hover:text-gold"
@@ -64,12 +64,12 @@ export default function Navbar() {
               </Link>
             </li>
           ))}
-          <li>
+          <li className="flex-shrink-0">
             <a
               href="https://wa.me/524428378891?text=Hola%2C%20vi%20el%20sitio%20de%20BLAV%20Bienes%20Ra%C3%ADces%20y%20me%20gustar%C3%ADa%20informaci%C3%B3n."
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-gold text-xs"
+              className="btn-gold text-xs whitespace-nowrap"
             >
               WhatsApp
             </a>
