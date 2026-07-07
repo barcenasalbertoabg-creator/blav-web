@@ -55,10 +55,24 @@ export default defineConfig({
                           .filter('_type == "propiedad" && estado == "reservado"')
                       ),
                     S.listItem()
-                      .title("🏁 Cerradas")
+                      .title("🔑 Rentadas")
                       .child(
                         S.documentList()
-                          .title("Vendidas / Rentadas")
+                          .title("Rentadas")
+                          .filter('_type == "propiedad" && estado == "rentado"')
+                      ),
+                    S.listItem()
+                      .title("🏷️ Vendidas")
+                      .child(
+                        S.documentList()
+                          .title("Vendidas")
+                          .filter('_type == "propiedad" && estado == "vendido"')
+                      ),
+                    S.listItem()
+                      .title("🏁 Cerradas (legacy)")
+                      .child(
+                        S.documentList()
+                          .title("Cerradas (legacy)")
                           .filter('_type == "propiedad" && estado == "cerrado"')
                       ),
                   ])
