@@ -1,5 +1,5 @@
-import { getFeaturedProjects } from "@/lib/projects";
-import { getFeaturedPropiedades } from "@/lib/propiedades";
+import { getAllFeaturedProjects } from "@/lib/projects";
+import { getAllFeaturedPropiedades } from "@/lib/propiedades";
 
 export interface HeroImage {
   src: string;
@@ -13,12 +13,11 @@ const FALLBACK_IMAGE: HeroImage = {
 };
 
 const MIN_IMAGES = 3;
-const MAX_IMAGES = 6;
 
 export async function getHeroImages(): Promise<HeroImage[]> {
   const [proyectos, propiedades] = await Promise.all([
-    getFeaturedProjects(),
-    getFeaturedPropiedades(),
+    getAllFeaturedProjects(),
+    getAllFeaturedPropiedades(),
   ]);
 
   const proyectoImages: HeroImage[] = proyectos
@@ -37,11 +36,9 @@ export async function getHeroImages(): Promise<HeroImage[]> {
     if (propiedadImages[i]) images.push(propiedadImages[i]);
   }
 
-  const trimmed = images.slice(0, MAX_IMAGES);
-
-  while (trimmed.length < MIN_IMAGES) {
-    trimmed.push(FALLBACK_IMAGE);
+  while (images.length < MIN_IMAGES) {
+    images.push(FALLBACK_IMAGE);
   }
 
-  return trimmed;
+  return images;
 }

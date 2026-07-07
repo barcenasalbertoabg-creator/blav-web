@@ -52,6 +52,13 @@ export const FEATURED_PROJECTS_QUERY = `
   }
 `;
 
+// Sin tope de cantidad: usada por el hero slideshow
+export const ALL_FEATURED_PROJECTS_QUERY = `
+  *[_type == "project" && estado == "activo" && destacado == true] | order(nombre asc) {
+    ${PROJECT_FIELDS}
+  }
+`;
+
 export const PROJECT_BY_SLUG_QUERY = `
   *[_type == "project" && slug.current == $slug][0] {
     ${PROJECT_FIELDS}
@@ -116,6 +123,13 @@ export const ALL_PROPIEDADES_QUERY = `
 // Destacadas en home: incluye vendidas/rentadas para mostrar badge (social proof)
 export const FEATURED_PROPIEDADES_QUERY = `
   *[_type == "propiedad" && destacado == true][0...4] | order(_createdAt desc) {
+    ${PROPIEDAD_FIELDS}
+  }
+`;
+
+// Sin tope de cantidad: usada por el hero slideshow
+export const ALL_FEATURED_PROPIEDADES_QUERY = `
+  *[_type == "propiedad" && destacado == true] | order(_createdAt desc) {
     ${PROPIEDAD_FIELDS}
   }
 `;

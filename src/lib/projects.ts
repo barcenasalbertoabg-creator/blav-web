@@ -1,5 +1,6 @@
 import { client } from "@/../../sanity/lib/client";
 import {
+  ALL_FEATURED_PROJECTS_QUERY,
   ALL_PROJECTS_QUERY,
   ALL_SLUGS_QUERY,
   FEATURED_PROJECTS_QUERY,
@@ -72,6 +73,17 @@ export async function getFeaturedProjects(): Promise<Project[]> {
   if (!isSanityConfigured()) return [];
   try {
     const raw: SanityProjectRaw[] = await client.fetch(FEATURED_PROJECTS_QUERY);
+    return (raw ?? []).map(normalizeProject);
+  } catch {
+    return [];
+  }
+}
+
+// Sin tope de cantidad: usada por el hero slideshow
+export async function getAllFeaturedProjects(): Promise<Project[]> {
+  if (!isSanityConfigured()) return [];
+  try {
+    const raw: SanityProjectRaw[] = await client.fetch(ALL_FEATURED_PROJECTS_QUERY);
     return (raw ?? []).map(normalizeProject);
   } catch {
     return [];

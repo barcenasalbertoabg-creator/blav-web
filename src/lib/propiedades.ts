@@ -1,5 +1,6 @@
 import { client } from "@/../../sanity/lib/client";
 import {
+  ALL_FEATURED_PROPIEDADES_QUERY,
   ALL_PROPIEDADES_QUERY,
   FEATURED_PROPIEDADES_QUERY,
   PROPIEDAD_BY_SLUG_QUERY,
@@ -76,6 +77,17 @@ export async function getFeaturedPropiedades(): Promise<Propiedad[]> {
   if (!isSanityConfigured()) return [];
   try {
     const raw: SanityPropiedadRaw[] = await client.fetch(FEATURED_PROPIEDADES_QUERY);
+    return (raw ?? []).map(normalizePropiedad);
+  } catch {
+    return [];
+  }
+}
+
+// Sin tope de cantidad: usada por el hero slideshow
+export async function getAllFeaturedPropiedades(): Promise<Propiedad[]> {
+  if (!isSanityConfigured()) return [];
+  try {
+    const raw: SanityPropiedadRaw[] = await client.fetch(ALL_FEATURED_PROPIEDADES_QUERY);
     return (raw ?? []).map(normalizePropiedad);
   } catch {
     return [];
