@@ -1,16 +1,16 @@
 import Link from "next/link";
+import { getHeroImages } from "@/lib/hero";
+import HeroSlideshow from "./HeroSlideshow";
 
-export default function Hero() {
+export default async function Hero() {
+  const images = await getHeroImages();
+
   return (
     <section className="relative min-h-screen flex items-center bg-blav-black overflow-hidden">
-      {/* Background image via CSS */}
-      <div
-        className="absolute inset-0 bg-cover bg-center opacity-25"
-        style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1679157381710-42b20b9eb032?w=1920&q=80')",
-        }}
-      />
+      {/* Slideshow de fotos reales de propiedades/proyectos destacados */}
+      <HeroSlideshow images={images} />
+      {/* Overlay oscuro para que el texto siga siendo legible sobre fotos reales */}
+      <div className="absolute inset-0 bg-blav-black/60" />
       {/* Subtle gold overlay at bottom */}
       <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-blav-black/80 to-transparent" />
 
