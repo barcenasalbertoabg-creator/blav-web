@@ -191,3 +191,21 @@ export const FEATURED_TESTIMONIOS_QUERY = `
     destacado
   }
 `;
+
+// ── GALERÍA DE CIERRES ────────────────────────────────────────────────────────
+
+export const GALERIA_CIERRES_QUERY = `
+  *[_type == "galeriaCierre" && defined(imagen.asset)]
+    | order(coalesce(orden, 999999) asc, _createdAt desc) {
+    _id,
+    pie,
+    "imagen": imagen {
+      asset,
+      hotspot,
+      crop,
+      "width": asset->metadata.dimensions.width,
+      "height": asset->metadata.dimensions.height,
+      "lqip": asset->metadata.lqip
+    }
+  }
+`;

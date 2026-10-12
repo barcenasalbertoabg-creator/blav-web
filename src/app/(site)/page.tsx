@@ -7,6 +7,7 @@ import Segmentos from "@/components/home/Segmentos";
 import ProyectosDestacados from "@/components/home/ProyectosDestacados";
 import PorQueBlav from "@/components/home/PorQueBlav";
 import Testimonios from "@/components/home/Testimonios";
+import GaleriaCierres from "@/components/home/GaleriaCierres";
 import ZonasQueAtendemos from "@/components/home/ZonasQueAtendemos";
 import FAQ from "@/components/home/FAQ";
 import CTAFinal from "@/components/home/CTAFinal";
@@ -23,6 +24,7 @@ export default function HomePage() {
       <ProyectosDestacados />
       <PorQueBlav />
       <Testimonios />
+      <GaleriaCierres />
       <ZonasQueAtendemos />
       <FAQ />
       <CTAFinal />

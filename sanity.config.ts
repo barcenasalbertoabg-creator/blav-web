@@ -77,6 +77,15 @@ export default defineConfig({
                       ),
                   ])
               ),
+            S.divider(),
+            S.listItem()
+              .title("Galería de cierres")
+              .icon(() => "📸")
+              .child(
+                S.documentTypeList("galeriaCierre")
+                  .title("Galería de cierres")
+                  .defaultOrdering([{ field: "orden", direction: "asc" }])
+              ),
           ]),
     }),
     visionTool({ defaultApiVersion: apiVersion }),
