@@ -77,6 +77,22 @@ export default defineConfig({
                       ),
                   ])
               ),
+            S.listItem()
+              .title("Artículos")
+              .icon(() => "📝")
+              .child(
+                S.documentTypeList("articulo")
+                  .title("Artículos")
+                  .defaultOrdering([{ field: "fecha", direction: "desc" }])
+              ),
+            S.listItem()
+              .title("Testimonios")
+              .icon(() => "💬")
+              .child(
+                S.documentTypeList("testimonio")
+                  .title("Testimonios")
+                  .defaultOrdering([{ field: "destacado", direction: "desc" }])
+              ),
             S.divider(),
             S.listItem()
               .title("Galería de cierres")
