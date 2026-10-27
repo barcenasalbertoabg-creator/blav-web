@@ -43,7 +43,7 @@ export default function HeroSlideshow({ images }: Props) {
   if (!isDesktop) {
     const img = images[mobileIndex] ?? images[0];
     return (
-      <div className="absolute inset-0">
+      <div className="absolute inset-0" data-fondo-decorativo>
         <Image
           src={img.src}
           alt={img.alt}
@@ -59,6 +59,7 @@ export default function HeroSlideshow({ images }: Props) {
   return (
     <div
       className="absolute inset-0"
+      data-fondo-decorativo
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >

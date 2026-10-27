@@ -57,9 +57,11 @@ export default function PropiedadesClient({ propiedades, tipos }: Props) {
 
   return (
     <>
-      {/* Filtro de estatus */}
+      {/* Filtro de estatus.
+          En móvil, max-md:px-16 deja libre la columna derecha de los botones flotantes
+          (WhatsApp y asistente) para que nunca tapen un filtro, en cualquier posición del scroll. */}
       <AnimatedSection className="mb-6">
-        <div className="flex flex-wrap gap-2 justify-center">
+        <div className="flex flex-wrap gap-2 justify-center max-md:px-16">
           {ESTATUS_OPTIONS.map((o) => (
             <button
               key={o.param}
@@ -78,7 +80,7 @@ export default function PropiedadesClient({ propiedades, tipos }: Props) {
 
       {/* Filtros tipo y operación */}
       <AnimatedSection className="mb-10 space-y-4">
-        <div className="flex flex-wrap gap-3 justify-center">
+        <div className="flex flex-wrap gap-3 justify-center max-md:px-16">
           {["Todos", ...tipos].map((t) => (
             <button
               key={t}
@@ -93,7 +95,7 @@ export default function PropiedadesClient({ propiedades, tipos }: Props) {
             </button>
           ))}
         </div>
-        <div className="flex flex-wrap gap-3 justify-center">
+        <div className="flex flex-wrap gap-3 justify-center max-md:px-16">
           {["Todos", "venta", "renta", "preventa"].map((op) => (
             <button
               key={op}

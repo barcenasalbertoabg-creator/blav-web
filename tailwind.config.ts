@@ -21,6 +21,11 @@ const config: Config = {
           navy: "#0d1b2e",
         },
         whatsapp: "#25D366",
+        asis: {
+          dark: "#2B2018",
+          gold: "#8B7535",
+          crema: "#F7F4EE",
+        },
       },
       fontFamily: {
         display: ["var(--font-cormorant)", "Georgia", "serif"],
