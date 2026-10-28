@@ -9,7 +9,6 @@ export default function WhatsAppFAB() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Contactar por WhatsApp"
-      data-flotante
       className="fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-6 z-50 w-14 h-14 bg-whatsapp rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform duration-200"
     >
       <svg viewBox="0 0 24 24" className="w-7 h-7 fill-white" xmlns="http://www.w3.org/2000/svg">

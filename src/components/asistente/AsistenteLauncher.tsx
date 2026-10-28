@@ -32,85 +32,15 @@ function contextoDeRuta(pathname: string): ContextoPagina {
 
 const ES_MOVIL = "(max-width: 767px)";
 
-// Marca un contenedor con data-fondo-decorativo para permitir el botón completo sobre su foto.
-// Posición completa del botón (coincide con las clases right-[28px] / bottom-[92px]).
-const DERECHA = 28;
-const ABAJO = 92;
-const TAMANO = 48;
-const UTIL = "a,button,input,select,textarea,label,[role=button],img,picture,video,iframe,form,nav";
-
-/** ¿El botón, en su posición completa, quedaría encima de un botón, foto, formulario o precio? */
-function tapariaAlgo(boton: HTMLElement | null): boolean {
-  const izq = window.innerWidth - DERECHA - TAMANO;
-  const arriba = window.innerHeight - ABAJO - TAMANO;
-  for (const fx of [0.1, 0.5, 0.9]) {
-    for (const fy of [0.1, 0.5, 0.9]) {
-      for (const el of document.elementsFromPoint(izq + TAMANO * fx, arriba + TAMANO * fy)) {
-        if (boton?.contains(el) || el.closest("[data-flotante]")) continue;
-        const util = el.closest(UTIL);
-        // Las fotos de fondo decorativas (hero) sí se pueden cubrir; las de propiedades no.
-        if (util?.matches("img,picture") && util.closest("[data-fondo-decorativo]")) continue;
-        if (util) return true;
-        if (el.childElementCount === 0 && /\$\s?\d/.test(el.textContent ?? "")) return true;
-      }
-    }
-  }
-  return false;
-}
-
 export default function AsistenteLauncher() {
   const pathname = usePathname();
   const router = useRouter();
   const [abierto, setAbierto] = useState(false);
   const [montado, setMontado] = useState(false);
-  const [oculto, setOculto] = useState(false);
-  const [replegado, setReplegado] = useState(false);
   const botonRef = useRef<HTMLButtonElement>(null);
   const navegacionPendiente = useRef<string | null>(null);
   const abiertoRef = useRef(false);
   abiertoRef.current = abierto;
-
-  // ── En scroll hacia abajo se oculta; reaparece al subir o al detenerse.
-  //    Al detenerse, si quedaría encima de algo útil, se repliega al borde. ──
-  useEffect(() => {
-    let ultimoY = window.scrollY;
-    let timer: ReturnType<typeof setTimeout> | undefined;
-    let timer2: ReturnType<typeof setTimeout> | undefined;
-    const revisar = () => setReplegado(tapariaAlgo(botonRef.current));
-    const onScroll = () => {
-      const y = window.scrollY;
-      if (y > ultimoY + 8 && y > 160) setOculto(true);
-      else if (y < ultimoY - 8) setOculto(false);
-      ultimoY = y;
-      clearTimeout(timer);
-      clearTimeout(timer2);
-      timer = setTimeout(() => {
-        revisar();
-        setOculto(false);
-      }, 700);
-      // Las secciones animadas (AnimatedSection) llegan a su lugar después: segunda revisión.
-      timer2 = setTimeout(revisar, 1700);
-    };
-    const inicial = setTimeout(revisar, 800);
-    // Imágenes que terminan de cargar mueven el contenido: volver a revisar.
-    let pendiente = 0;
-    const alCambiarAlto = new ResizeObserver(() => {
-      cancelAnimationFrame(pendiente);
-      pendiente = requestAnimationFrame(revisar);
-    });
-    alCambiarAlto.observe(document.body);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", revisar);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", revisar);
-      alCambiarAlto.disconnect();
-      cancelAnimationFrame(pendiente);
-      clearTimeout(timer);
-      clearTimeout(timer2);
-      clearTimeout(inicial);
-    };
-  }, [pathname]);
 
   // ── Botón "atrás" del celular: cierra el panel sin salir de la página ──
   useEffect(() => {
@@ -161,14 +91,8 @@ export default function AsistenteLauncher() {
         aria-label="Abrir asistente de IA de BLAV"
         aria-haspopup="dialog"
         aria-expanded={abierto}
-        data-flotante
-        data-replegado={replegado || undefined}
-        className={`fixed z-40 right-[28px] bottom-[calc(92px+env(safe-area-inset-bottom))] w-12 h-12 rounded-full bg-asis-dark p-[2px] shadow-lg ring-2 ring-asis-gold transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-asis-gold focus-visible:translate-x-0 ${
-          abierto || oculto
-            ? "opacity-0 translate-y-3 scale-90 pointer-events-none"
-            : replegado
-              ? "opacity-100 translate-x-[60px]" // solo asoman 16px: el margen lateral del sitio en móvil (px-4)
-              : "opacity-100"
+        className={`fixed z-40 right-[28px] bottom-[calc(92px+env(safe-area-inset-bottom))] w-12 h-12 rounded-full bg-asis-dark p-[2px] shadow-lg ring-2 ring-asis-gold transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-asis-gold ${
+          abierto ? "opacity-0 translate-y-3 scale-90 pointer-events-none" : "opacity-100"
         }`}
       >
         <Image
@@ -181,7 +105,7 @@ export default function AsistenteLauncher() {
         />
         <span
           aria-hidden="true"
-          className={`${replegado ? "hidden" : ""} absolute -top-1 -left-1 bg-asis-gold text-white text-[9px] font-sans font-semibold leading-none px-1 py-[3px] rounded`}
+          className="absolute -top-1 -left-1 bg-asis-gold text-white text-[9px] font-sans font-semibold leading-none px-1 py-[3px] rounded"
         >
           IA
         </span>
