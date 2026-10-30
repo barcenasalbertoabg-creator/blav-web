@@ -38,7 +38,6 @@ export default function AsistenteLauncher() {
   const [abierto, setAbierto] = useState(false);
   const [montado, setMontado] = useState(false);
   const botonRef = useRef<HTMLButtonElement>(null);
-  const navegacionPendiente = useRef<string | null>(null);
   const abiertoRef = useRef(false);
   abiertoRef.current = abierto;
 
@@ -47,15 +46,12 @@ export default function AsistenteLauncher() {
     const onPopState = (e: PopStateEvent) => {
       if (abiertoRef.current && !e.state?.blavAsistente) {
         setAbierto(false);
-        const destino = navegacionPendiente.current;
-        navegacionPendiente.current = null;
-        if (destino) router.push(destino);
-        else botonRef.current?.focus({ preventScroll: true });
+        botonRef.current?.focus({ preventScroll: true });
       }
     };
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
-  }, [router]);
+  }, []);
 
   const abrir = useCallback(() => {
     setMontado(true);
@@ -67,15 +63,24 @@ export default function AsistenteLauncher() {
   }, []);
 
   const cerrar = useCallback((destino?: string) => {
-    if (window.history.state?.blavAsistente) {
-      navegacionPendiente.current = destino ?? null;
-      window.history.back(); // el popstate cierra el panel
+    const entradaDelPanel = Boolean(window.history.state?.blavAsistente);
+    setAbierto(false);
+    if (destino) {
+      // No usar history.back() + push: el router de Next atiende el mismo popstate
+      // y restaura la URL anterior, pisando la navegación. Reemplazar la entrada
+      // del panel deja el historial como [página, ficha] y "atrás" vuelve bien.
+      if (entradaDelPanel) router.replace(destino);
+      else router.push(destino);
       return;
     }
-    setAbierto(false);
-    if (destino) router.push(destino);
-    else botonRef.current?.focus({ preventScroll: true });
+    if (entradaDelPanel) window.history.back(); // quitar la entrada del panel
+    botonRef.current?.focus({ preventScroll: true });
   }, [router]);
+
+  // Cualquier cambio de ruta cierra el panel.
+  useEffect(() => {
+    setAbierto(false);
+  }, [pathname]);
 
   if (pathname?.startsWith("/studio")) return null;
 

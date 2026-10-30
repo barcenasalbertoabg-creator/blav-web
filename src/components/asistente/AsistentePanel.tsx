@@ -285,13 +285,13 @@ export default function AsistentePanel({ abierto, onCerrar, contexto }: Props) {
     setTexto("");
   };
 
-  // Tarjetas y enlaces internos: en móvil se cierra la hoja antes de navegar.
+  // Tarjetas y enlaces internos: se cierra el panel y se navega (móvil y escritorio).
+  // Ctrl/Cmd/Shift/clic medio conservan el comportamiento nativo (nueva pestaña).
   const abrirEnlace = (e: React.MouseEvent, url: string, esTarjeta = false) => {
     if (esTarjeta) registrarEvento("tarjeta_click");
-    if (esMovil) {
-      e.preventDefault();
-      onCerrar(url);
-    }
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    e.preventDefault();
+    onCerrar(url);
   };
 
   // ── Deslizar hacia abajo para cerrar (solo en la cabecera) ──
