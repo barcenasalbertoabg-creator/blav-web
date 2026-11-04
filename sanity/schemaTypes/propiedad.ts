@@ -314,6 +314,20 @@ export const propiedadType = defineType({
       fields: [
         defineField({ name: "ciudad",      title: "Ciudad",           type: "string" }),
         defineField({ name: "zona",        title: "Zona o colonia",   type: "string" }),
+        defineField({
+          name: "zonaFiltro",
+          title: "Zona para el buscador (opcional)",
+          type: "string",
+          description: "Pestaña de zona en Propiedades. Si se deja vacía, se calcula sola a partir de 'Zona o colonia'.",
+          options: {
+            list: [
+              "Ciudad Meseta", "Sonterra", "Tres Cantos", "Ciudad del Sol", "Corregidora", "Juriquilla",
+              "El Marqués", "Zibatá", "ZIRÉ", "Villas del Refugio", "El Mirador", "Viñedos",
+              "Puerta de San Miguel", "El Jacal", "Terra Park", "Querétaro Business Park",
+              "San Mateo", "Praderas del Bosque", "Norponiente",
+            ],
+          },
+        }),
         defineField({ name: "descripcion", title: "Descripción de acceso", type: "string" }),
         defineField({
           name: "maps_url",

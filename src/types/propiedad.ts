@@ -39,6 +39,7 @@ export interface Propiedad {
   ubicacion?: {
     ciudad?: string;
     zona?: string;
+    zonaFiltro?: string;
     descripcion?: string;
     maps_url?: string;
     coordenadas?: { lat: number; lng: number } | null;

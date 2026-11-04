@@ -100,6 +100,7 @@ const PROPIEDAD_FIELDS = `
   "ubicacion": ubicacion{
     ciudad,
     zona,
+    zonaFiltro,
     descripcion,
     maps_url,
     "coordenadas": coordenadas{ lat, lng }
