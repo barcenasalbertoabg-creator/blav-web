@@ -117,6 +117,9 @@ export default function PropiedadCard({ propiedad }: Props) {
               </p>
             ) : mostrar_precio && precio ? (
               <p className="font-display text-lg font-semibold text-gold">
+                {/^desde/i.test(nota_precio?.trim() ?? "") && (
+                  <span className="font-sans text-xs text-blav-grayMid mr-1">Desde</span>
+                )}
                 {formatPrecio(precio, moneda)}
                 <span className="font-sans text-xs text-blav-grayMid ml-1">{moneda}</span>
               </p>

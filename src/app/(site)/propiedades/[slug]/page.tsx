@@ -245,10 +245,20 @@ export default async function PropiedadPage({ params }: Props) {
                 <div className="bg-blav-gray p-6 border border-blav-gray">
                   <p className="font-sans text-xs text-gold tracking-widest uppercase mb-2">Precio</p>
                   {p.mostrar_precio && p.precio ? (
-                    <p className="font-display text-2xl font-semibold text-blav-black mb-1">
-                      {formatPrecio(p.precio, p.moneda)}
-                      <span className="font-sans text-sm text-blav-grayMid ml-2">{p.moneda}</span>
-                    </p>
+                    <>
+                      {/^desde/i.test(p.nota_precio?.trim() ?? "") && (
+                        <p className="font-sans text-xs text-blav-grayMid">Desde</p>
+                      )}
+                      <p className="font-display text-2xl font-semibold text-blav-black mb-1">
+                        {formatPrecio(p.precio, p.moneda)}
+                        <span className="font-sans text-sm text-blav-grayMid ml-2">{p.moneda}</span>
+                      </p>
+                      {/^desde/i.test(p.nota_precio?.trim() ?? "") && (
+                        <p className="font-sans text-xs text-blav-grayMid">
+                          Precio de lista de la unidad más accesible disponible. Sujeto a cambios y disponibilidad.
+                        </p>
+                      )}
+                    </>
                   ) : (
                     <p className="font-display text-lg font-semibold text-blav-black mb-1">
                       {p.nota_precio}
