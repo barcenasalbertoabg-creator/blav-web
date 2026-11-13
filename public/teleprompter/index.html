@@ -62,7 +62,6 @@ textarea{width:100%;min-height:52vh;background:#1c1b18;color:var(--fg);border:1p
 <div id="count" hidden></div>
 <div id="msg" hidden></div>
 <div id="warn" hidden></div>
-<div id="meter"><span>🎙️</span><div class="bar"><div class="fill" id="mfill"></div></div><span id="mtxt">Mic</span></div>
 
 <div class="bottom">
   <div class="side">
@@ -93,7 +92,7 @@ textarea{width:100%;min-height:52vh;background:#1c1b18;color:var(--fg);border:1p
   <div class="sw"><span>Contar 3 segundos antes de grabar</span><input type="checkbox" id="cd"></div>
   <div class="sw"><span>Texto en espejo (para cristal de teleprompter)</span><input type="checkbox" id="flip"></div>
   <p class="note" id="camInfo"></p>
-  <p class="note">Antes de grabar en iPhone: Ajustes › Pantalla y brillo › Bloqueo automático › <b>Nunca</b>. Si la pantalla se bloquea, la grabación se corta. Si usas AirPods o micrófono inalámbrico y se desconectan, la toma se queda sin audio: el medidor 🎙️ te avisa.</p>
+  <p class="note">Antes de grabar en iPhone: Ajustes › Pantalla y brillo › Bloqueo automático › <b>Nunca</b>. Si la pantalla se bloquea, la grabación se corta. Si usas AirPods o micrófono inalámbrico y se desconectan, la toma se queda sin audio: al terminar cada toma la app te dice si el audio se grabó.</p>
   <div class="actions"><button class="btn primary" id="closeSet">Listo</button></div>
 </section>
 
@@ -159,7 +158,7 @@ async function startCam(){
   try{
     stream=await navigator.mediaDevices.getUserMedia({audio:true,
       video:{facingMode:cfg.facing,width:{ideal:res[1]},height:{ideal:res[0]},frameRate:{ideal:30}}});
-    cam.srcObject=stream;await cam.play().catch(()=>{});msg('');hookMeter();
+    cam.srcObject=stream;await cam.play().catch(()=>{});msg('');hookTrack();
     const s=stream.getVideoTracks()[0].getSettings();
     const at=stream.getAudioTracks()[0];$('camInfo').textContent=`Cámara: ${s.width||'?'}×${s.height||'?'} a ${Math.round(s.frameRate||0)||'?'} fps · Micrófono: ${at?(at.label||'sí')+(at.muted?' (silenciado)':''):'NO'} · Formato: ${pickMime()||'auto'}`;
   }catch(e){
@@ -170,7 +169,8 @@ async function startCam(){
 let actx=null,an=null,srcNode=null,peak=0,silentFor=0,heard=false,lastM=0;
 function warn(t){const w=$('warn');if(!t){w.hidden=true;return}w.textContent=t;w.hidden=false}
 function audioOk(){const a=stream&&stream.getAudioTracks()[0];return !!(a&&a.readyState==='live'&&!a.muted&&a.enabled)}
-function hookMeter(){
+function hookTrack(){const a=stream&&stream.getAudioTracks()[0];if(a){a.onmute=()=>{if(recording)warn('⚠️ SE PERDIÓ EL MICRÓFONO — detén y repite la toma')};a.onended=a.onmute;}}
+function hookMeterUnused(){
   try{if(!actx)actx=new (window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();
     if(srcNode)try{srcNode.disconnect()}catch(e){}
     const at0=stream.getAudioTracks()[0];if(!at0)return;srcNode=actx.createMediaStreamSource(new MediaStream([at0.clone()])); // clon: el medidor no interfiere con la grabaciónan=actx.createAnalyser();an.fftSize=1024;srcNode.connect(an);
@@ -187,9 +187,7 @@ function meterTick(t){
       if(silentFor>5&&!$('warn').textContent.includes('PERDIÓ'))warn('⚠️ No se escucha audio. Revisa el micrófono.');
       else if(silentFor<=5&&$('warn').textContent.startsWith('⚠️ No se escucha'))warn('');}
   }
-  lastM=t;requestAnimationFrame(meterTick);
-}
-requestAnimationFrame(meterTick);
+  lastM=t;}
 
 function pickMime(){
   const list=['video/mp4','video/webm;codecs=vp8,opus','video/webm'];
@@ -212,7 +210,6 @@ async function startRec(){
   warn('');
   if(!stream||!audioOk()){await startCam();if(!stream)return}
   if(!audioOk()){warn('⚠️ El micrófono no está activo. Cierra otras apps que usen audio, quita AirPods y recarga la página.');return}
-  if(actx&&actx.state==='suspended')await actx.resume().catch(()=>{});
   heard=false;silentFor=0;
   if(!window.MediaRecorder){msg('Este navegador no puede grabar video. Actualiza iOS o usa Chrome en Android.');return}
   if(!keepOffset)setText(txt.textContent);keepOffset=false;await countdown();
@@ -241,7 +238,7 @@ async function checkFileAudio(b){
     const dec=await new Promise((res,rej)=>{const r=ctx.decodeAudioData(ab,res,rej);if(r&&r.then)r.then(res,rej)});
     const d=dec.getChannelData(0);let mx=0;for(let i=0;i<d.length;i+=50){const x=Math.abs(d[i]);if(x>mx)mx=x}
     verdict=mx>0.01?'Audio ✔ (se escucha)':'⚠️ El archivo tiene pista de audio pero está en SILENCIO — repite la toma';
-  }catch(e){verdict=heard?'Audio ✔ (medidor)':'⚠️ NO SE DETECTÓ AUDIO — repite la toma';}
+  }catch(e){verdict='Escucha la toma para confirmar el audio';}
   info.textContent=info.textContent.replace(' · revisando audio…','')+' · '+verdict;
 }
 function showReview(){
