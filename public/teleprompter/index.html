@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Teleprompter BLAV</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Prompter BLAV">
+<meta name="theme-color" content="#0f0f0e">
+<link rel="manifest" href="/teleprompter/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/teleprompter/icon-180.png">
+<style>
+:root{--bg:#0f0f0e;--fg:#f4f2ea;--muted:#a19d90;--gold:#c9b45a;--red:#e5484d;--panel:rgba(20,20,18,.92);--line:#3a3830;
+--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,system-ui,sans-serif;color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:#000;color:var(--fg);font-family:var(--font);overflow:hidden;overscroll-behavior:none}
+#cam{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;background:#000}
+#cam.mirror{transform:scaleX(-1)}
+/* prompter band: top of screen, right under the front camera */
+#band{position:fixed;left:0;right:0;top:0;padding-top:env(safe-area-inset-top,0px);height:calc(var(--bandh,38vh) + env(safe-area-inset-top,0px));background:linear-gradient(rgba(0,0,0,var(--shade,.55)),rgba(0,0,0,var(--shade,.55)) 80%,rgba(0,0,0,0));overflow:hidden;z-index:2;pointer-events:none}
+#scroll{height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(transparent,#000 12%,#000 78%,transparent);mask-image:linear-gradient(transparent,#000 12%,#000 78%,transparent)}
+#txt{margin:0 auto;padding:6vh max(18px,env(safe-area-inset-left,0px)) 60vh;max-width:30ch;font-weight:800;line-height:1.3;text-align:center;white-space:pre-wrap;text-shadow:0 2px 6px #000;will-change:transform}
+#txt.flip{transform:scaleX(-1)}
+/* controls */
+.bottom{position:fixed;left:0;right:0;bottom:0;z-index:3;padding:10px max(16px,env(safe-area-inset-left,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-right,0px));display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px}
+.side{display:flex;flex-direction:column;gap:8px;align-items:flex-start;min-width:0}
+.side.r{align-items:flex-end}
+.btn{font:700 15px var(--font);color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:9px 14px;min-height:40px}
+.btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+#rec{width:78px;height:78px;border-radius:50%;border:4px solid #fff;background:transparent;display:grid;place-items:center;padding:0;flex:0 0 auto}
+#rec i{display:block;width:60px;height:60px;border-radius:50%;background:var(--red);transition:all .2s}
+#rec.on i{width:30px;height:30px;border-radius:7px}
+#timer{position:fixed;z-index:3;left:50%;transform:translateX(-50%);bottom:calc(120px + env(safe-area-inset-bottom,0px));font:700 15px var(--font);background:var(--red);padding:4px 10px;border-radius:6px;font-variant-numeric:tabular-nums}
+#count{position:fixed;inset:0;z-index:5;display:grid;place-items:center;font:800 30vw var(--font);color:#fff;text-shadow:0 4px 20px #000;pointer-events:none}
+/* sheets */
+.sheet{position:fixed;inset:0;z-index:6;background:rgba(15,15,14,.97);overflow-y:auto;padding:calc(18px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-left,0px)) calc(24px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-right,0px))}
+.sheet h2{margin:0 0 12px;font:800 22px var(--font)}
+.row{display:flex;flex-direction:column;gap:6px;margin:14px 0}
+.row label{font:600 14px var(--font);color:var(--muted);display:flex;justify-content:space-between}
+input[type=range]{width:100%;accent-color:var(--gold)}
+textarea{width:100%;min-height:52vh;background:#1c1b18;color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:12px;font:500 16px/1.5 var(--font)}
+.sw{display:flex;align-items:center;justify-content:space-between;font:600 15px var(--font);padding:10px 0;border-bottom:1px solid var(--line)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.primary{background:var(--gold);color:#16150f;border-color:var(--gold)}
+.note{color:var(--muted);font-size:13px;line-height:1.45}
+#review video{width:100%;max-height:60vh;border-radius:10px;background:#000}
+#meter{position:fixed;z-index:3;left:50%;transform:translateX(-50%);bottom:calc(150px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font:700 13px var(--font)}
+#meter .bar{width:120px;height:8px;border-radius:4px;background:#333;overflow:hidden}
+#meter .fill{height:100%;width:0;background:#3fb950;transition:width .08s}
+#warn{position:fixed;left:16px;right:16px;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:7;background:var(--red);color:#fff;border-radius:12px;padding:12px 14px;font:800 16px/1.4 var(--font);text-align:center}
+#msg{position:fixed;left:16px;right:16px;top:calc(40vh + env(safe-area-inset-top,0px));z-index:4;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;font:600 15px/1.45 var(--font)}
+</style>
+</head>
+<body>
+<video id="cam" playsinline muted autoplay class="mirror"></video>
+
+<div id="band"><div id="scroll"><div id="txt"></div></div></div>
+<div id="timer" hidden>00:00</div>
+<div id="count" hidden></div>
+<div id="msg" hidden></div>
+<div id="warn" hidden></div>
+<div id="meter"><span>🎙️</span><div class="bar"><div class="fill" id="mfill"></div></div><span id="mtxt">Mic</span></div>
+
+<div class="bottom">
+  <div class="side">
+    <button class="btn" id="bScript" aria-label="Editar guion">Guion</button>
+    <button class="btn" id="bSet" aria-label="Ajustes">Ajustes</button>
+  </div>
+  <button id="rec" aria-label="Grabar"><i></i></button>
+  <div class="side r">
+    <button class="btn" id="bScroll" aria-label="Pausar texto">❚❚ Texto</button>
+    <button class="btn" id="bFlipCam" aria-label="Cambiar cámara">⟲ Cámara</button>
+  </div>
+</div>
+
+<section class="sheet" id="sScript" hidden>
+  <h2>Guion</h2>
+  <p class="note">Escribe o pega tu texto. Una línea en blanco entre bloques te da pausas naturales.</p>
+  <textarea id="src" aria-label="Texto del guion"></textarea>
+  <div class="actions"><button class="btn primary" id="saveScript">Guardar</button><button class="btn" id="resetScript">Usar guion de ejemplo</button></div>
+</section>
+
+<section class="sheet" id="sSet" hidden>
+  <h2>Ajustes</h2>
+  <div class="row"><label for="speed">Velocidad del texto <span id="vSpeed"></span></label><input id="speed" type="range" min="8" max="90"></div>
+  <div class="row"><label for="size">Tamaño de letra <span id="vSize"></span></label><input id="size" type="range" min="22" max="64"></div>
+  <div class="row"><label for="bandh">Alto del área de texto <span id="vBand"></span></label><input id="bandh" type="range" min="20" max="60"></div>
+  <div class="row"><label for="shade">Oscurecer fondo del texto <span id="vShade"></span></label><input id="shade" type="range" min="0" max="90"></div>
+  <div class="row"><label for="quality">Calidad <span id="vQ"></span></label><input id="quality" type="range" min="1" max="3"></div>
+  <div class="sw"><span>Contar 3 segundos antes de grabar</span><input type="checkbox" id="cd"></div>
+  <div class="sw"><span>Texto en espejo (para cristal de teleprompter)</span><input type="checkbox" id="flip"></div>
+  <p class="note" id="camInfo"></p>
+  <p class="note">Antes de grabar en iPhone: Ajustes › Pantalla y brillo › Bloqueo automático › <b>Nunca</b>. Si la pantalla se bloquea, la grabación se corta. Si usas AirPods o micrófono inalámbrico y se desconectan, la toma se queda sin audio: el medidor 🎙️ te avisa.</p>
+  <div class="actions"><button class="btn primary" id="closeSet">Listo</button></div>
+</section>
+
+<section class="sheet" id="review" hidden>
+  <h2>Tu toma</h2>
+  <video id="play" controls playsinline></video>
+  <p class="note" id="info"></p>
+  <div class="actions">
+    <button class="btn primary" id="saveVid">Guardar / Compartir</button>
+    <button class="btn" id="cont">Repetir desde este párrafo</button>
+    <button class="btn" id="again">Repetir desde el inicio</button>
+  </div>
+  <p class="note">En iPhone, toca <b>Guardar / Compartir</b> y elige <b>Guardar video</b> para mandarlo a Fotos. Después me lo envías por aquí.</p>
+</section>
+
+<script>
+const DEF=`¿Todavía debes tu casa y quieres venderla?
+Sí se puede, y es más común de lo que crees.
+
+Tu comprador adquiere la casa con su propio crédito, Infonavit o bancario, o de contado.
+
+El día de la firma ante notario, con ese dinero se liquida lo que todavía debes, se cancela tu hipoteca y tú recibes la diferencia.
+
+Así hemos vendido varias propiedades en BLAV, con crédito Infonavit y bancario.
+
+Antes de vender, haz tres cosas:
+
+Uno: pide tu saldo actualizado a tu banco o en Mi Cuenta Infonavit.
+
+Dos: revisa que tus escrituras y tu predial estén en orden.
+
+Tres: saca cuentas. Precio de venta, menos tu deuda, menos los gastos de la venta, es lo que te queda.
+
+El error más común: poner precio sin saber cuánto debes. Puedes vender y quedarte sin enganche para tu siguiente casa.
+
+Cada caso es distinto; confirma con tu institución y con el notario.
+
+¿Quieres saber cuánto te quedaría?
+Escríbenos al 442 816 0850.
+BLAV Bienes Raíces.`;
+const $=id=>document.getElementById(id);
+const S={get(k,d){try{const v=localStorage.getItem('tpb_'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('tpb_'+k,JSON.stringify(v))}catch(e){}}};
+const cfg={speed:S.get('speed',28),size:S.get('size',34),bandh:S.get('bandh',36),shade:S.get('shade',55),quality:S.get('quality',3),cd:S.get('cd',true),flip:S.get('flip',false),facing:S.get('facing','user')};
+const txt=$('txt'),scroll=$('scroll'),cam=$('cam');
+let keepOffset=false,stream=null,rec=null,chunks=[],blob=null,mime='',recording=false,scrolling=true,offset=0,last=0,t0=0,tick=null,lock=null;
+
+function applyCfg(){
+  txt.style.fontSize=cfg.size+'px';document.documentElement.style.setProperty('--bandh',cfg.bandh+'vh');
+  document.documentElement.style.setProperty('--shade',(cfg.shade/100).toFixed(2));txt.classList.toggle('flip',cfg.flip);
+  $('speed').value=cfg.speed;$('size').value=cfg.size;$('bandh').value=cfg.bandh;$('shade').value=cfg.shade;$('quality').value=cfg.quality;$('cd').checked=cfg.cd;$('flip').checked=cfg.flip;
+  $('vSpeed').textContent=cfg.speed;$('vSize').textContent=cfg.size+' px';$('vBand').textContent=cfg.bandh+'%';$('vShade').textContent=cfg.shade+'%';$('vQ').textContent=['','Ligera','Alta','Máxima'][cfg.quality];
+  cam.classList.toggle('mirror',cfg.facing==='user');
+}
+function setText(t){txt.textContent=t;offset=0;txt.style.transform=(cfg.flip?'scaleX(-1) ':'')+'translateY(0)'}
+setText(S.get('script',DEF));applyCfg();
+
+function msg(t){const m=$('msg');if(!t){m.hidden=true;return}m.textContent=t;m.hidden=false}
+
+async function startCam(){
+  if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){msg('Este navegador no permite usar la cámara. En iPhone ábrelo en Safari.');return}
+  const res=cfg.quality==1?[720,1280]:[1080,1920];
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({audio:true,
+      video:{facingMode:cfg.facing,width:{ideal:res[1]},height:{ideal:res[0]},frameRate:{ideal:30}}});
+    cam.srcObject=stream;await cam.play().catch(()=>{});msg('');hookMeter();
+    const s=stream.getVideoTracks()[0].getSettings();
+    const at=stream.getAudioTracks()[0];$('camInfo').textContent=`Cámara: ${s.width||'?'}×${s.height||'?'} a ${Math.round(s.frameRate||0)||'?'} fps · Micrófono: ${at?(at.label||'sí')+(at.muted?' (silenciado)':''):'NO'} · Formato: ${pickMime()||'auto'}`;
+  }catch(e){
+    msg(e.name==='NotAllowedError'?'Necesito permiso para la cámara y el micrófono. En iPhone: Ajustes › Safari › Cámara y Micrófono › Permitir, y recarga.':'No pude abrir la cámara ('+e.name+'). Cierra otras apps que la usen y recarga.');
+  }
+}
+
+let actx=null,an=null,srcNode=null,peak=0,silentFor=0,heard=false,lastM=0;
+function warn(t){const w=$('warn');if(!t){w.hidden=true;return}w.textContent=t;w.hidden=false}
+function audioOk(){const a=stream&&stream.getAudioTracks()[0];return !!(a&&a.readyState==='live'&&!a.muted&&a.enabled)}
+function hookMeter(){
+  try{if(!actx)actx=new (window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();
+    if(srcNode)try{srcNode.disconnect()}catch(e){}
+    const at0=stream.getAudioTracks()[0];if(!at0)return;srcNode=actx.createMediaStreamSource(new MediaStream([at0.clone()])); // clon: el medidor no interfiere con la grabaciónan=actx.createAnalyser();an.fftSize=1024;srcNode.connect(an);
+    const a=stream.getAudioTracks()[0];
+    if(a){a.onmute=()=>{if(recording)warn('⚠️ SE PERDIÓ EL MICRÓFONO — detén y repite la toma')};a.onended=a.onmute;}
+  }catch(e){}
+}
+const buf=new Float32Array(1024);
+function meterTick(t){
+  if(an){an.getFloatTimeDomainData(buf);let sum=0;for(const v of buf)sum+=v*v;const rms=Math.sqrt(sum/buf.length);
+    const lvl=Math.min(1,rms*12);$('mfill').style.width=(lvl*100)+'%';$('mtxt').textContent=lvl>0.06?'OK':'Mic';
+    const dt=lastM?(t-lastM)/1000:0;
+    if(recording){if(lvl>0.06){heard=true;silentFor=0}else silentFor+=dt;
+      if(silentFor>5&&!$('warn').textContent.includes('PERDIÓ'))warn('⚠️ No se escucha audio. Revisa el micrófono.');
+      else if(silentFor<=5&&$('warn').textContent.startsWith('⚠️ No se escucha'))warn('');}
+  }
+  lastM=t;requestAnimationFrame(meterTick);
+}
+requestAnimationFrame(meterTick);
+
+function pickMime(){
+  const list=['video/mp4','video/webm;codecs=vp8,opus','video/webm'];
+  for(const m of list){try{if(window.MediaRecorder&&MediaRecorder.isTypeSupported(m))return m}catch(e){}}return '';
+}
+
+function frame(t){
+  if(recording&&scrolling){const dt=last?(t-last)/1000:0;offset+=dt*cfg.speed;
+    const max=txt.scrollHeight-scroll.clientHeight*0.4; if(offset>max)offset=max;
+    txt.style.transform=(cfg.flip?'scaleX(-1) ':'')+`translateY(${-offset}px)`;}
+  last=t;requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+async function wake(on){try{if(on&&'wakeLock' in navigator){lock=await navigator.wakeLock.request('screen')}else if(lock){await lock.release();lock=null}}catch(e){}}
+
+async function countdown(){if(!cfg.cd)return;const c=$('count');c.hidden=false;for(const n of [3,2,1]){c.textContent=n;await new Promise(r=>setTimeout(r,900))}c.hidden=true}
+
+async function startRec(){
+  warn('');
+  if(!stream||!audioOk()){await startCam();if(!stream)return}
+  if(!audioOk()){warn('⚠️ El micrófono no está activo. Cierra otras apps que usen audio, quita AirPods y recarga la página.');return}
+  if(actx&&actx.state==='suspended')await actx.resume().catch(()=>{});
+  heard=false;silentFor=0;
+  if(!window.MediaRecorder){msg('Este navegador no puede grabar video. Actualiza iOS o usa Chrome en Android.');return}
+  if(!keepOffset)setText(txt.textContent);keepOffset=false;await countdown();
+  mime=pickMime();const vb=[0,4e6,8e6,12e6][cfg.quality];
+  // Grabamos de un stream "limpio" con exactamente 1 pista de video y 1 de audio
+  const a=stream.getAudioTracks()[0],v=stream.getVideoTracks()[0];
+  const recStream=new MediaStream([v,a]);
+  const isIOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  try{rec=new MediaRecorder(recStream,isIOS?(mime?{mimeType:mime}:{}):(mime?{mimeType:mime,videoBitsPerSecond:vb}:{videoBitsPerSecond:vb}))}
+  catch(e){rec=new MediaRecorder(recStream)}
+  chunks=[];rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
+  rec.onstop=showReview;rec.start();
+  recording=true;scrolling=true;last=0;$('rec').classList.add('on');$('rec').setAttribute('aria-label','Detener');
+  $('bScroll').textContent='❚❚ Texto';t0=Date.now();$('timer').hidden=false;
+  tick=setInterval(()=>{const s=Math.floor((Date.now()-t0)/1000);$('timer').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},250);
+  wake(true);
+}
+function stopRec(){if(rec&&rec.state!=='inactive')rec.stop();recording=false;clearInterval(tick);$('timer').hidden=true;$('rec').classList.remove('on');$('rec').setAttribute('aria-label','Grabar');wake(false)}
+
+function ext(){const t=(rec&&rec.mimeType)||mime||'';return t.includes('mp4')?'mp4':'webm'}
+async function checkFileAudio(b){
+  const info=$('info');info.textContent+=' · revisando audio…';
+  let verdict='';
+  try{const ctx=new (window.OfflineAudioContext||window.webkitOfflineAudioContext)(1,44100,44100);
+    const ab=await b.arrayBuffer();
+    const dec=await new Promise((res,rej)=>{const r=ctx.decodeAudioData(ab,res,rej);if(r&&r.then)r.then(res,rej)});
+    const d=dec.getChannelData(0);let mx=0;for(let i=0;i<d.length;i+=50){const x=Math.abs(d[i]);if(x>mx)mx=x}
+    verdict=mx>0.01?'Audio ✔ (se escucha)':'⚠️ El archivo tiene pista de audio pero está en SILENCIO — repite la toma';
+  }catch(e){verdict=heard?'Audio ✔ (medidor)':'⚠️ NO SE DETECTÓ AUDIO — repite la toma';}
+  info.textContent=info.textContent.replace(' · revisando audio…','')+' · '+verdict;
+}
+function showReview(){
+  blob=new Blob(chunks,{type:(rec&&rec.mimeType)||mime||'video/mp4'});
+  const v=$('play');v.src=URL.createObjectURL(blob);
+  const s=stream?stream.getVideoTracks()[0].getSettings():{};
+  $('info').textContent=`${(blob.size/1048576).toFixed(1)} MB · ${s.width||'?'}×${s.height||'?'} · ${ext().toUpperCase()}`;
+  $('review').hidden=false;
+  warn('');checkFileAudio(blob);
+}
+async function saveVid(){
+  if(!blob)return;const d=new Date();const name=`BLAV_toma_${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}_${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}.${ext()}`;
+  const file=new File([blob],name,{type:blob.type});
+  if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:name});return}catch(e){if(e.name==='AbortError')return}}
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();
+}
+
+$('rec').onclick=()=>recording?stopRec():startRec();
+$('bScroll').onclick=()=>{scrolling=!scrolling;last=0;$('bScroll').textContent=scrolling?'❚❚ Texto':'▶ Texto'};
+$('bFlipCam').onclick=()=>{if(recording)return;cfg.facing=cfg.facing==='user'?'environment':'user';S.set('facing',cfg.facing);applyCfg();startCam()};
+$('bScript').onclick=()=>{if(recording)return;$('src').value=txt.textContent;$('sScript').hidden=false};
+$('saveScript').onclick=()=>{const t=$('src').value.trim()||DEF;S.set('script',t);setText(t);$('sScript').hidden=true};
+$('resetScript').onclick=()=>{$('src').value=DEF};
+$('bSet').onclick=()=>{if(recording)return;$('sSet').hidden=false};
+$('closeSet').onclick=()=>{$('sSet').hidden=true};
+for(const k of ['speed','size','bandh','shade','quality'])$(k).oninput=e=>{const old=cfg.quality;cfg[k]=+e.target.value;S.set(k,cfg[k]);applyCfg();if(k==='quality'&&old!==cfg.quality)startCam()};
+$('cd').onchange=e=>{cfg.cd=e.target.checked;S.set('cd',cfg.cd)};
+$('flip').onchange=e=>{cfg.flip=e.target.checked;S.set('flip',cfg.flip);applyCfg();setText(txt.textContent)};
+$('saveVid').onclick=saveVid;
+$('again').onclick=()=>{$('review').hidden=true;$('play').pause();setText(txt.textContent)};
+$('cont').onclick=()=>{$('review').hidden=true;$('play').pause();
+  // regresa al inicio del párrafo que estabas leyendo
+  const lh=parseFloat(getComputedStyle(txt).lineHeight)||cfg.size*1.3;const lines=txt.textContent.split('\n');
+  let y=0,start=0;const pos=offset+scroll.clientHeight*0.1;
+  const probe=document.createElement('div');probe.style.cssText=getComputedStyle(txt).cssText;
+  // aproximación: retrocede ~3 líneas para retomar con contexto
+  offset=Math.max(0,offset-lh*3);txt.style.transform=(cfg.flip?'scaleX(-1) ':'')+`translateY(${-offset}px)`;keepOffset=true};
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&recording)stopRec()});
+startCam();
+</script>
+</body>
+</html>
