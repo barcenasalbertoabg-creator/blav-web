@@ -47,9 +47,6 @@ textarea{width:100%;min-height:52vh;background:#1c1b18;color:var(--fg);border:1p
 .primary{background:var(--gold);color:#16150f;border-color:var(--gold)}
 .note{color:var(--muted);font-size:13px;line-height:1.45}
 #review video{width:100%;max-height:60vh;border-radius:10px;background:#000}
-#meter{position:fixed;z-index:3;left:50%;transform:translateX(-50%);bottom:calc(150px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font:700 13px var(--font)}
-#meter .bar{width:120px;height:8px;border-radius:4px;background:#333;overflow:hidden}
-#meter .fill{height:100%;width:0;background:#3fb950;transition:width .08s}
 #warn{position:fixed;left:16px;right:16px;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:7;background:var(--red);color:#fff;border-radius:12px;padding:12px 14px;font:800 16px/1.4 var(--font);text-align:center}
 #msg{position:fixed;left:16px;right:16px;top:calc(40vh + env(safe-area-inset-top,0px));z-index:4;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;font:600 15px/1.45 var(--font)}
 </style>
@@ -92,7 +89,7 @@ textarea{width:100%;min-height:52vh;background:#1c1b18;color:var(--fg);border:1p
   <div class="sw"><span>Contar 3 segundos antes de grabar</span><input type="checkbox" id="cd"></div>
   <div class="sw"><span>Texto en espejo (para cristal de teleprompter)</span><input type="checkbox" id="flip"></div>
   <p class="note" id="camInfo"></p>
-  <p class="note">Antes de grabar en iPhone: Ajustes › Pantalla y brillo › Bloqueo automático › <b>Nunca</b>. Si la pantalla se bloquea, la grabación se corta. Si usas AirPods o micrófono inalámbrico y se desconectan, la toma se queda sin audio: al terminar cada toma la app te dice si el audio se grabó.</p>
+  <p class="note">Si usas AirPods o micrófono inalámbrico y se desconectan, la toma se queda sin audio. Al terminar cada toma la app te dice si el audio se grabó.</p>
   <div class="actions"><button class="btn primary" id="closeSet">Listo</button></div>
 </section>
 
@@ -135,7 +132,7 @@ Escríbenos al 442 816 0850.
 BLAV Bienes Raíces.`;
 const $=id=>document.getElementById(id);
 const S={get(k,d){try{const v=localStorage.getItem('tpb_'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('tpb_'+k,JSON.stringify(v))}catch(e){}}};
-const cfg={speed:S.get('speed',28),size:S.get('size',34),bandh:S.get('bandh',36),shade:S.get('shade',55),quality:S.get('quality',3),cd:S.get('cd',true),flip:S.get('flip',false),facing:S.get('facing','user')};
+const cfg={speed:S.get('speed',28),size:S.get('size',34),bandh:S.get('bandh',36),shade:S.get('shade',55),quality:S.get('q2',2),cd:S.get('cd',true),flip:S.get('flip',false),facing:S.get('facing','user')};
 const txt=$('txt'),scroll=$('scroll'),cam=$('cam');
 let keepOffset=false,stream=null,rec=null,chunks=[],blob=null,mime='',recording=false,scrolling=true,offset=0,last=0,t0=0,tick=null,lock=null;
 
@@ -143,7 +140,7 @@ function applyCfg(){
   txt.style.fontSize=cfg.size+'px';document.documentElement.style.setProperty('--bandh',cfg.bandh+'vh');
   document.documentElement.style.setProperty('--shade',(cfg.shade/100).toFixed(2));txt.classList.toggle('flip',cfg.flip);
   $('speed').value=cfg.speed;$('size').value=cfg.size;$('bandh').value=cfg.bandh;$('shade').value=cfg.shade;$('quality').value=cfg.quality;$('cd').checked=cfg.cd;$('flip').checked=cfg.flip;
-  $('vSpeed').textContent=cfg.speed;$('vSize').textContent=cfg.size+' px';$('vBand').textContent=cfg.bandh+'%';$('vShade').textContent=cfg.shade+'%';$('vQ').textContent=['','Ligera','Alta','Máxima'][cfg.quality];
+  $('vSpeed').textContent=cfg.speed;$('vSize').textContent=cfg.size+' px';$('vBand').textContent=cfg.bandh+'%';$('vShade').textContent=cfg.shade+'%';$('vQ').textContent=['','Ligera (720p)','Recomendada (720p)','Máxima (1080p, puede trabarse)'][cfg.quality];
   cam.classList.toggle('mirror',cfg.facing==='user');
 }
 function setText(t){txt.textContent=t;offset=0;txt.style.transform=(cfg.flip?'scaleX(-1) ':'')+'translateY(0)'}
@@ -154,43 +151,23 @@ function msg(t){const m=$('msg');if(!t){m.hidden=true;return}m.textContent=t;m.h
 async function startCam(){
   if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){msg('Este navegador no permite usar la cámara. En iPhone ábrelo en Safari.');return}
-  const res=cfg.quality==1?[720,1280]:[1080,1920];
+  const res=cfg.quality==3?[1080,1920]:[720,1280];
   try{
     stream=await navigator.mediaDevices.getUserMedia({audio:true,
       video:{facingMode:cfg.facing,width:{ideal:res[1]},height:{ideal:res[0]},frameRate:{ideal:30}}});
     cam.srcObject=stream;await cam.play().catch(()=>{});msg('');hookTrack();
     const s=stream.getVideoTracks()[0].getSettings();
-    const at=stream.getAudioTracks()[0];$('camInfo').textContent=`Cámara: ${s.width||'?'}×${s.height||'?'} a ${Math.round(s.frameRate||0)||'?'} fps · Micrófono: ${at?(at.label||'sí')+(at.muted?' (silenciado)':''):'NO'} · Formato: ${pickMime()||'auto'}`;
+    $('camInfo').textContent=`Cámara: ${s.width||'?'}×${s.height||'?'} a ${Math.round(s.frameRate||0)||'?'} fps.`;
   }catch(e){
     msg(e.name==='NotAllowedError'?'Necesito permiso para la cámara y el micrófono. En iPhone: Ajustes › Safari › Cámara y Micrófono › Permitir, y recarga.':'No pude abrir la cámara ('+e.name+'). Cierra otras apps que la usen y recarga.');
   }
 }
 
-let actx=null,an=null,srcNode=null,peak=0,silentFor=0,heard=false,lastM=0;
 function warn(t){const w=$('warn');if(!t){w.hidden=true;return}w.textContent=t;w.hidden=false}
 function audioOk(){const a=stream&&stream.getAudioTracks()[0];return !!(a&&a.readyState==='live'&&!a.muted&&a.enabled)}
 function hookTrack(){const a=stream&&stream.getAudioTracks()[0];if(a){a.onmute=()=>{if(recording)warn('⚠️ SE PERDIÓ EL MICRÓFONO — detén y repite la toma')};a.onended=a.onmute;}}
-function hookMeterUnused(){
-  try{if(!actx)actx=new (window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();
-    if(srcNode)try{srcNode.disconnect()}catch(e){}
-    const at0=stream.getAudioTracks()[0];if(!at0)return;srcNode=actx.createMediaStreamSource(new MediaStream([at0.clone()])); // clon: el medidor no interfiere con la grabaciónan=actx.createAnalyser();an.fftSize=1024;srcNode.connect(an);
-    const a=stream.getAudioTracks()[0];
-    if(a){a.onmute=()=>{if(recording)warn('⚠️ SE PERDIÓ EL MICRÓFONO — detén y repite la toma')};a.onended=a.onmute;}
-  }catch(e){}
-}
-const buf=new Float32Array(1024);
-function meterTick(t){
-  if(an){an.getFloatTimeDomainData(buf);let sum=0;for(const v of buf)sum+=v*v;const rms=Math.sqrt(sum/buf.length);
-    const lvl=Math.min(1,rms*12);$('mfill').style.width=(lvl*100)+'%';$('mtxt').textContent=lvl>0.06?'OK':'Mic';
-    const dt=lastM?(t-lastM)/1000:0;
-    if(recording){if(lvl>0.06){heard=true;silentFor=0}else silentFor+=dt;
-      if(silentFor>5&&!$('warn').textContent.includes('PERDIÓ'))warn('⚠️ No se escucha audio. Revisa el micrófono.');
-      else if(silentFor<=5&&$('warn').textContent.startsWith('⚠️ No se escucha'))warn('');}
-  }
-  lastM=t;}
-
 function pickMime(){
-  const list=['video/mp4','video/webm;codecs=vp8,opus','video/webm'];
+  const list=['video/mp4;codecs=avc1.640028,mp4a.40.2','video/mp4;codecs=avc1,mp4a','video/mp4','video/webm;codecs=h264,opus','video/webm;codecs=vp9,opus','video/webm'];
   for(const m of list){try{if(window.MediaRecorder&&MediaRecorder.isTypeSupported(m))return m}catch(e){}}return '';
 }
 
@@ -209,19 +186,14 @@ async function countdown(){if(!cfg.cd)return;const c=$('count');c.hidden=false;f
 async function startRec(){
   warn('');
   if(!stream||!audioOk()){await startCam();if(!stream)return}
-  if(!audioOk()){warn('⚠️ El micrófono no está activo. Cierra otras apps que usen audio, quita AirPods y recarga la página.');return}
-  heard=false;silentFor=0;
+  if(!audioOk()){warn('⚠️ El micrófono no está activo. Quita AirPods o micrófono inalámbrico, cierra otras apps de audio y recarga.');return}
   if(!window.MediaRecorder){msg('Este navegador no puede grabar video. Actualiza iOS o usa Chrome en Android.');return}
   if(!keepOffset)setText(txt.textContent);keepOffset=false;await countdown();
-  mime=pickMime();const vb=[0,4e6,8e6,12e6][cfg.quality];
-  // Grabamos de un stream "limpio" con exactamente 1 pista de video y 1 de audio
-  const a=stream.getAudioTracks()[0],v=stream.getVideoTracks()[0];
-  const recStream=new MediaStream([v,a]);
-  const isIOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
-  try{rec=new MediaRecorder(recStream,isIOS?(mime?{mimeType:mime}:{}):(mime?{mimeType:mime,videoBitsPerSecond:vb}:{videoBitsPerSecond:vb}))}
-  catch(e){rec=new MediaRecorder(recStream)}
+  mime=pickMime();const vb=[0,2.5e6,5e6,8e6][cfg.quality];
+  try{rec=new MediaRecorder(stream,mime?{mimeType:mime,videoBitsPerSecond:vb,audioBitsPerSecond:128000}:{videoBitsPerSecond:vb})}
+  catch(e){rec=new MediaRecorder(stream)}
   chunks=[];rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
-  rec.onstop=showReview;rec.start();
+  rec.onstop=showReview;rec.start(1000);
   recording=true;scrolling=true;last=0;$('rec').classList.add('on');$('rec').setAttribute('aria-label','Detener');
   $('bScroll').textContent='❚❚ Texto';t0=Date.now();$('timer').hidden=false;
   tick=setInterval(()=>{const s=Math.floor((Date.now()-t0)/1000);$('timer').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},250);
@@ -231,23 +203,21 @@ function stopRec(){if(rec&&rec.state!=='inactive')rec.stop();recording=false;cle
 
 function ext(){const t=(rec&&rec.mimeType)||mime||'';return t.includes('mp4')?'mp4':'webm'}
 async function checkFileAudio(b){
-  const info=$('info');info.textContent+=' · revisando audio…';
-  let verdict='';
+  const info=$('info');let verdict='';
   try{const ctx=new (window.OfflineAudioContext||window.webkitOfflineAudioContext)(1,44100,44100);
     const ab=await b.arrayBuffer();
     const dec=await new Promise((res,rej)=>{const r=ctx.decodeAudioData(ab,res,rej);if(r&&r.then)r.then(res,rej)});
     const d=dec.getChannelData(0);let mx=0;for(let i=0;i<d.length;i+=50){const x=Math.abs(d[i]);if(x>mx)mx=x}
-    verdict=mx>0.01?'Audio ✔ (se escucha)':'⚠️ El archivo tiene pista de audio pero está en SILENCIO — repite la toma';
+    verdict=mx>0.01?'Audio ✔ (se escucha)':'⚠️ ESTA TOMA SALIÓ SIN AUDIO — repítela';
   }catch(e){verdict='Escucha la toma para confirmar el audio';}
-  info.textContent=info.textContent.replace(' · revisando audio…','')+' · '+verdict;
+  info.textContent+=' · '+verdict;
 }
 function showReview(){
   blob=new Blob(chunks,{type:(rec&&rec.mimeType)||mime||'video/mp4'});
   const v=$('play');v.src=URL.createObjectURL(blob);
   const s=stream?stream.getVideoTracks()[0].getSettings():{};
   $('info').textContent=`${(blob.size/1048576).toFixed(1)} MB · ${s.width||'?'}×${s.height||'?'} · ${ext().toUpperCase()}`;
-  $('review').hidden=false;
-  warn('');checkFileAudio(blob);
+  $('review').hidden=false;warn('');setTimeout(()=>checkFileAudio(blob),300);
 }
 async function saveVid(){
   if(!blob)return;const d=new Date();const name=`BLAV_toma_${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}_${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}.${ext()}`;
@@ -264,19 +234,13 @@ $('saveScript').onclick=()=>{const t=$('src').value.trim()||DEF;S.set('script',t
 $('resetScript').onclick=()=>{$('src').value=DEF};
 $('bSet').onclick=()=>{if(recording)return;$('sSet').hidden=false};
 $('closeSet').onclick=()=>{$('sSet').hidden=true};
-for(const k of ['speed','size','bandh','shade','quality'])$(k).oninput=e=>{const old=cfg.quality;cfg[k]=+e.target.value;S.set(k,cfg[k]);applyCfg();if(k==='quality'&&old!==cfg.quality)startCam()};
+for(const k of ['speed','size','bandh','shade','quality'])$(k).oninput=e=>{const old=cfg.quality;cfg[k]=+e.target.value;S.set(k==='quality'?'q2':k,cfg[k]);applyCfg();if(k==='quality'&&old!==cfg.quality)startCam()};
 $('cd').onchange=e=>{cfg.cd=e.target.checked;S.set('cd',cfg.cd)};
 $('flip').onchange=e=>{cfg.flip=e.target.checked;S.set('flip',cfg.flip);applyCfg();setText(txt.textContent)};
 $('saveVid').onclick=saveVid;
+$('cont').onclick=()=>{$('review').hidden=true;$('play').pause();const lh=parseFloat(getComputedStyle(txt).lineHeight)||cfg.size*1.3;offset=Math.max(0,offset-lh*3);txt.style.transform=(cfg.flip?'scaleX(-1) ':'')+`translateY(${-offset}px)`;keepOffset=true};
 $('again').onclick=()=>{$('review').hidden=true;$('play').pause();setText(txt.textContent)};
-$('cont').onclick=()=>{$('review').hidden=true;$('play').pause();
-  // regresa al inicio del párrafo que estabas leyendo
-  const lh=parseFloat(getComputedStyle(txt).lineHeight)||cfg.size*1.3;const lines=txt.textContent.split('\n');
-  let y=0,start=0;const pos=offset+scroll.clientHeight*0.1;
-  const probe=document.createElement('div');probe.style.cssText=getComputedStyle(txt).cssText;
-  // aproximación: retrocede ~3 líneas para retomar con contexto
-  offset=Math.max(0,offset-lh*3);txt.style.transform=(cfg.flip?'scaleX(-1) ':'')+`translateY(${-offset}px)`;keepOffset=true};
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&recording)stopRec()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&recording)stopRec();if(!document.hidden&&stream&&!audioOk()&&!recording)startCam()});
 startCam();
 </script>
 </body>
